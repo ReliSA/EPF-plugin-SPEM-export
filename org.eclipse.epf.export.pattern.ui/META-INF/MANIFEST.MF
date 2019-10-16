@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.epf.export.pattern.ui; singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.epf.export.pattern.ui.ExportPatternUIPlugin
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.epf.export;visibility:=reexport,
+ org.eclipse.epf.export.pattern;visibility:=reexport,
+ org.eclipse.epf.publishing.ui;visibility:=reexport,
+ org.eclipse.ui,
+ org.eclipse.epf.common.ui
+Eclipse-LazyStart: true
+Bundle-Vendor: %providerName
+Bundle-ClassPath: exportpatternui.jar
+Export-Package: org.eclipse.epf.export.pattern.ui,
+ org.eclipse.epf.export.pattern.ui.wizards
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
