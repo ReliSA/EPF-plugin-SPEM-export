@@ -2,6 +2,7 @@ package org.eclipse.epf.export.pattern;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.epf.library.edit.util.ProcessScopeUtil;
 import org.eclipse.epf.uma.MethodConfiguration;
+import org.eclipse.epf.uma.MethodPlugin;
 import org.eclipse.epf.uma.Process;
 import org.eclipse.epf.uma.WorkOrder;
 import org.w3c.dom.Document;
@@ -41,14 +43,14 @@ public class ExportPatternXMLService implements IExportPatternService {
 		return new ExportPatternXMLService(data);
 	}
 	
-	public void export(Process process) {
-		this.logger.logMessage(String.format("Exportig process %s", process.getName()));
+	public void export(Collection<MethodPlugin> selectedPlugins) {
+		this.logger.logMessage("Exportig patterns.");
 		
-		MethodConfiguration config = process.getDefaultContext();
-		
-		if (config == null) {
-			config = ProcessScopeUtil.getInstance().loadScope(process);
-		}
+//		MethodConfiguration config = selectedPlugins.getDefaultContext();
+//		
+//		if (config == null) {
+//			config = ProcessScopeUtil.getInstance().loadScope(selectedPlugins);
+//		}
 		
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();

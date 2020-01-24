@@ -5,9 +5,7 @@ import java.io.File;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.epf.dataexchange.util.BaseResourceHandler;
 import org.eclipse.epf.dataexchange.util.UrlInfo;
-import org.eclipse.epf.uma.MethodElement;
 import org.eclipse.epf.uma.MethodPlugin;
-import org.eclipse.epf.uma.util.UmaUtil;
 
 /**
  * The resource handler for content in the exported library.

@@ -1,7 +1,11 @@
 package org.eclipse.epf.export.pattern;
 
+import java.util.Collection;
+
+import org.eclipse.epf.uma.MethodPlugin;
+
 public interface IExportPatternService {
 	
-	public void export(org.eclipse.epf.uma.Process process) throws ExportPatternServiceException;
+	public void export(Collection<MethodPlugin> selectedPlugins) throws ExportPatternServiceException;
 
 }
