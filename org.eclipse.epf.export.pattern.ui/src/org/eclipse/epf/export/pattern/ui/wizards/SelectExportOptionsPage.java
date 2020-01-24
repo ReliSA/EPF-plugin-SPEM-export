@@ -2,10 +2,17 @@ package org.eclipse.epf.export.pattern.ui.wizards;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.epf.export.pattern.ExportPatternData;
 import org.eclipse.epf.export.pattern.ui.ExportPatternUIPlugin;
 import org.eclipse.epf.export.pattern.ui.ExportPatternUIResources;
+import org.eclipse.epf.library.LibraryService;
+import org.eclipse.epf.library.LibraryServiceUtil;
+import org.eclipse.epf.library.edit.util.ProcessScopeUtil;
 import org.eclipse.epf.ui.wizards.BaseWizardPage;
+import org.eclipse.epf.uma.MethodConfiguration;
+import org.eclipse.epf.uma.MethodLibrary;
 import org.eclipse.epf.uma.Process;
+import org.eclipse.epf.uma.util.Scope;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -13,6 +20,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
@@ -35,6 +43,13 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 	protected Text directoryText;
 	
 	protected Button browseButton;
+	
+	protected Combo configCombo;
+	
+	private Process selectedProcess;
+	
+	protected ExportPatternData data;
+
 	
 	/**
 	 * Creates a new instance.
@@ -74,6 +89,7 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 					setPageComplete(false);
 					setErrorMessage(ExportPatternUIResources.invalidDirectory_error);
 				}
+				data.setDirectory(directoryText.getText().trim());
 			}
 		});
 		
@@ -162,6 +178,23 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 	 */
 	public String getPath() {
 		return this.directoryText.getText().trim();
+	}
+	
+	/**
+	 * Gets the user selected method configuration.
+	 */
+	public MethodConfiguration getMethodConfiguration() {
+		String configName = configCombo.getText().trim();
+		Scope scope = selectedProcess == null ? null : ProcessScopeUtil
+				.getInstance().loadScope(selectedProcess);
+		if (scope != null) {
+			if (scope.getName().equals(configName)) {
+				return scope;
+			}
+		}
+		MethodLibrary library = LibraryService.getInstance()
+				.getCurrentMethodLibrary();
+		return LibraryServiceUtil.getMethodConfiguration(library, configName);
 	}
 
 }

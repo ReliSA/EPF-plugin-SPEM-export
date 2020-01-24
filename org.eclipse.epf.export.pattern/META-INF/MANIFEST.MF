@@ -12,4 +12,6 @@ Export-Package: org.eclipse.epf.export.pattern
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.eclipse.epf.common;bundle-version="1.5.0",
  org.eclipse.epf.common.ui;bundle-version="1.5.0",
- org.eclipse.epf.dataexchange;bundle-version="1.5.0"
+ org.eclipse.epf.dataexchange;bundle-version="1.5.0",
+ org.eclipse.epf.library,
+ org.eclipse.epf.library.edit

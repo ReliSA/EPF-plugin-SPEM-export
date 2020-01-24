@@ -26,6 +26,9 @@ public final class ExportPatternUIResources extends NLS {
 	public static String directoryLabel_text;
 	public static String browseButton_text;
 	public static String invalidDirectory_error;
+	public static String overwriteText_msg1;
+	public static String exportingXML_text;
+	public static String exportXMLWizard_reviewLog;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, ExportPatternUIResources.class);
