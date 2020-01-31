@@ -14,4 +14,7 @@ Require-Bundle: org.eclipse.epf.common;bundle-version="1.5.0",
  org.eclipse.epf.common.ui;bundle-version="1.5.0",
  org.eclipse.epf.dataexchange;bundle-version="1.5.0",
  org.eclipse.epf.library,
- org.eclipse.epf.library.edit
+ org.eclipse.epf.library.edit,
+ org.eclipse.jface,
+ org.eclipse.emf.edit.ui,
+ org.eclipse.emf.edit

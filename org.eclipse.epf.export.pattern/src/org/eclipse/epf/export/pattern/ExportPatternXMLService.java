@@ -21,6 +21,11 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.ExtendedMetaData;
+import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
+import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
+import org.eclipse.epf.library.edit.TngAdapterFactory;
+import org.eclipse.epf.library.edit.process.BreakdownElementWrapperItemProvider;
+import org.eclipse.epf.library.edit.process.RoleDescriptorWrapperItemProvider;
 import org.eclipse.epf.library.edit.util.ConfigurableComposedAdapterFactory;
 import org.eclipse.epf.library.edit.util.ModelStructure;
 import org.eclipse.epf.library.edit.util.ProcessScopeUtil;
@@ -47,6 +52,8 @@ import org.eclipse.epf.uma.WorkOrder;
 import org.eclipse.epf.uma.WorkProduct;
 import org.eclipse.epf.uma.WorkProductDescriptor;
 import org.eclipse.epf.uma.util.UmaUtil;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -64,13 +71,16 @@ public class ExportPatternXMLService implements IExportPatternService {
 	
 	public ExportPatternXMLService(ExportPatternData data) {
 		this.data = data;
-		logger = new ExportPatternLogger(new File(System.getProperty("user.dir")));
+		logger = new ExportPatternLogger(new File(System.getProperty("user.dir")), "xml");
 	}
 	
 	public static ExportPatternXMLService getInstance(ExportPatternData data) {	
 		return new ExportPatternXMLService(data);
 	}
 	
+	/**
+	 * 
+	 */
 	public void export(Collection<MethodPlugin> selectedPlugins) {
 		this.logger.logMessage("Exportig patterns.");
 		
@@ -112,6 +122,10 @@ public class ExportPatternXMLService implements IExportPatternService {
 		return;
 	}
 	
+	/**
+	 * 
+	 * @param methodPlugin
+	 */
 	public void createXML(MethodPlugin methodPlugin) {
 		
 		try {
@@ -175,30 +189,16 @@ public class ExportPatternXMLService implements IExportPatternService {
 				processElement.setAttribute("name", process.getName());
 				processElement.setAttribute("ordering_guide", process.getOrderingGuide());
 				
-				for (BreakdownElement breakdownElement : process.getBreakdownElements()) {
-					Element beElement = doc.createElement("breadown_element");
-					beElement.setAttribute("name", breakdownElement.getName());
-					beElement.setAttribute("guid", breakdownElement.getGuid());
-					beElement.setAttribute("abstract", String.valueOf(breakdownElement.getIsAbstract()));
-					beElement.setAttribute("optional", String.valueOf(breakdownElement.getIsOptional()));
-					beElement.setAttribute("planned", String.valueOf(breakdownElement.getIsPlanned()));
-					beElement.setAttribute("main_description", breakdownElement.getPresentation().getMainDescription());
-					
-					if (breakdownElement instanceof TaskDescriptor) {
-						beElement.setAttribute("type", "task_descriptor");
-						((TaskDescriptor) breakdownElement).getTask();
-					} else if (breakdownElement instanceof RoleDescriptor) {
-						beElement.setAttribute("type", "role_descriptor");
-						((RoleDescriptor) breakdownElement).getRole();
-					} else if (breakdownElement instanceof WorkProductDescriptor) {
-						beElement.setAttribute("type", "work_product_descriptor");
-						((WorkProductDescriptor) breakdownElement).getWorkProduct();
-					} else if (breakdownElement instanceof Phase) {
-						beElement.setAttribute("type", "phase");
-						//((Phase) breakdownElement).
-					}
-					
-					processElement.appendChild(beElement);
+				ComposedAdapterFactory adapterFactory = null;
+				
+				adapterFactory = TngAdapterFactory.INSTANCE
+						.createWBSComposedAdapterFactory();
+				
+				ITreeContentProvider contentProvider = new AdapterFactoryContentProvider(
+						adapterFactory);
+				
+				if (process.getBreakdownElements().size() > 0) {
+					inspectProcess(contentProvider, process, doc, processElement);
 				}
 				
 				rootElement.appendChild(processElement);
@@ -221,6 +221,52 @@ public class ExportPatternXMLService implements IExportPatternService {
 			this.logger.logError("Error during XML export.", e);
 		} catch (TransformerException e) {
 			this.logger.logError("Error during XML export.", e);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param contentProvider
+	 * @param breakdownElement
+	 * @param doc
+	 * @param xmlElement
+	 */
+	private void inspectProcess(ITreeContentProvider contentProvider, BreakdownElement breakdownElement, Document doc, Element xmlElement) {
+		Object[] elements = contentProvider.getElements(breakdownElement);
+		for (int i = 0; i < elements.length; i++) {
+			Object element = elements[i];
+			Element beElement = doc.createElement("breakdown_element");
+			xmlElement.appendChild(beElement);
+			
+			if (element instanceof RoleDescriptorWrapperItemProvider) {
+				RoleDescriptorWrapperItemProvider provider = (RoleDescriptorWrapperItemProvider) element;
+				Object value = provider.getValue();
+				if (value instanceof RoleDescriptor) {
+					beElement.setAttribute("name", ((RoleDescriptor) value).getName());
+					beElement.setAttribute("guid", ((RoleDescriptor) value).getGuid());
+					beElement.setAttribute("type", "RoleDescriptor");
+				}
+			} else if (element instanceof RoleDescriptor) {
+				beElement.setAttribute("name", ((RoleDescriptor) element).getName());
+				beElement.setAttribute("guid", ((RoleDescriptor) element).getGuid());
+				beElement.setAttribute("type", "RoleDescriptor");
+			} else if (element instanceof BreakdownElementWrapperItemProvider) {
+				BreakdownElementWrapperItemProvider provider = (BreakdownElementWrapperItemProvider) element;
+				Object value = provider.getValue();
+				if (value instanceof WorkBreakdownElement) {
+					beElement.setAttribute("name", ((WorkBreakdownElement) value).getName());
+					beElement.setAttribute("guid", ((WorkBreakdownElement) value).getGuid());
+					beElement.setAttribute("type", "WorkBreakdownElement");
+					inspectProcess(contentProvider,
+							(WorkBreakdownElement) value, doc, beElement);
+				}
+			} else if (element instanceof WorkBreakdownElement) {
+				beElement.setAttribute("name", ((WorkBreakdownElement) element).getName());
+				beElement.setAttribute("guid", ((WorkBreakdownElement) element).getGuid());
+				beElement.setAttribute("type", "WorkBreakdownElement");
+				inspectProcess(contentProvider,
+						(WorkBreakdownElement) element, doc, beElement);
+			}
 		}
 	}
 	

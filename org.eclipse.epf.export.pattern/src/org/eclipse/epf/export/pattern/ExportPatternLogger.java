@@ -13,12 +13,12 @@ import org.eclipse.epf.dataexchange.util.FileLogger;
  */
 public class ExportPatternLogger extends FileLogger {
 
-	private static final String LOGS_FOLDER = "logs\\export\\pattern"; //$NON-NLS-1$
+	private static final String LOGS_FOLDER = "logs\\export\\pattern\\"; //$NON-NLS-1$
 	
 	/**
 	 * Creates new instance of logger.
 	 */
-	public ExportPatternLogger(File logRoot) {
-		super(new File(logRoot, LOGS_FOLDER));
+	public ExportPatternLogger(File logRoot, String specFolder) {
+		super(new File(logRoot, LOGS_FOLDER + specFolder));
 	}
 }
