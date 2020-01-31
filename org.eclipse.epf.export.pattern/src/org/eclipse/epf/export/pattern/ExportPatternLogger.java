@@ -5,7 +5,7 @@ import org.eclipse.epf.dataexchange.util.FileLogger;
 
 
 /**
- * Logger class for pattern export
+ * Logger class for pattern export.
  * 
  * @author Lenka Simeckova
  * @since 1.0
@@ -13,10 +13,10 @@ import org.eclipse.epf.dataexchange.util.FileLogger;
  */
 public class ExportPatternLogger extends FileLogger {
 
-	private static final String LOGS_FOLDER = "logs"; //$NON-NLS-1$
+	private static final String LOGS_FOLDER = "logs\\export\\pattern"; //$NON-NLS-1$
 	
 	/**
-	 * Creates a new instance.
+	 * Creates new instance of logger.
 	 */
 	public ExportPatternLogger(File logRoot) {
 		super(new File(logRoot, LOGS_FOLDER));
