@@ -22,7 +22,6 @@ public final class ExportPatternUIResources extends NLS {
 	public static String selectExportDirWizardPage_title;
 	public static String selectExportDirWizardPage_text;
 	public static String selectedProcessLabel_text;
-	public static String fileNameLabel_text;
 	public static String directoryLabel_text;
 	public static String browseButton_text;
 	public static String invalidDirectory_error;

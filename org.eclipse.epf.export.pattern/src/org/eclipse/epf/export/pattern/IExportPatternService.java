@@ -6,6 +6,6 @@ import org.eclipse.epf.uma.MethodPlugin;
 
 public interface IExportPatternService {
 	
-	public void export(Collection<MethodPlugin> selectedPlugins) throws ExportPatternServiceException;
+	public void export() throws ExportPatternServiceException;
 
 }

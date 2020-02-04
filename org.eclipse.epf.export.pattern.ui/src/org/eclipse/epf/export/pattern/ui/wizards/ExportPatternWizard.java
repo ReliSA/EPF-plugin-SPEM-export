@@ -39,8 +39,6 @@ public class ExportPatternWizard extends BaseWizard implements IExportWizard {
 	protected SelectPluginPage selectPluginPage;
 	
 	protected SelectExportOptionsPage selectExportOptionsPage;
-
-	protected PluginExportData pluginData = new PluginExportData();
 	
 	protected ExportPatternData patternData = new ExportPatternData();
 	
@@ -76,8 +74,8 @@ public class ExportPatternWizard extends BaseWizard implements IExportWizard {
 	public void addPages() {
 		if (wizardExtender == null) {
 			
-			selectPluginPage = new SelectPluginPage(pluginData);
-			selectExportOptionsPage = new SelectExportOptionsPage();
+			selectPluginPage = new SelectPluginPage(patternData);
+			selectExportOptionsPage = new SelectExportOptionsPage(patternData);
 			
 			super.addPage(selectPluginPage);
 			super.addPage(selectExportOptionsPage);
@@ -91,7 +89,7 @@ public class ExportPatternWizard extends BaseWizard implements IExportWizard {
 			if (page != null) {
 				wizardPages.add(page);
 			} else {
-				selectPluginPage = new SelectPluginPage(pluginData);
+				selectPluginPage = new SelectPluginPage(patternData);
 				wizardPages.add(selectPluginPage);
 			}
 			IWizardPage selectExportOptionsPage = wizardExtender
@@ -99,7 +97,7 @@ public class ExportPatternWizard extends BaseWizard implements IExportWizard {
 			if (selectExportOptionsPage != null) {
 				wizardPages.add(selectExportOptionsPage);
 			} else {
-				selectExportOptionsPage = new SelectExportOptionsPage();
+				selectExportOptionsPage = new SelectExportOptionsPage(patternData);
 				wizardPages.add(selectExportOptionsPage);
 			}
 			
@@ -129,7 +127,7 @@ public class ExportPatternWizard extends BaseWizard implements IExportWizard {
 	}
 	
 	public boolean doFinish() {
-		return exportPattern(pluginData.selectedPlugins,
+		return exportPattern(patternData.selectedPlugins,
 				ExportPatternXMLService.getInstance(patternData));
 	}
 	
@@ -142,7 +140,7 @@ public class ExportPatternWizard extends BaseWizard implements IExportWizard {
 
 		service = ExportPatternXMLService.getInstance(patternData);
 		
-		service.export(selectedPlugins);
+		service.export();
 		
 		return true;
 	}

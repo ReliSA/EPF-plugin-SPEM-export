@@ -36,17 +36,9 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 	
 	protected Composite composite;
 	
-	protected Text processText;
-	
-	protected Text fileNameText;
-	
 	protected Text directoryText;
 	
 	protected Button browseButton;
-	
-	protected Combo configCombo;
-	
-	private Process selectedProcess;
 	
 	protected ExportPatternData data;
 
@@ -54,29 +46,26 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 	/**
 	 * Creates a new instance.
 	 */
-	public SelectExportOptionsPage(String pageName) {
+	public SelectExportOptionsPage(String pageName, ExportPatternData data) {
 		super(pageName);
 		setTitle(ExportPatternUIResources.selectExportDirWizardPage_title);
 		setDescription(ExportPatternUIResources.selectExportDirWizardPage_text);
 		setImageDescriptor(ExportPatternUIPlugin.getDefault().getImageDescriptor(
 				"full/wizban/product32.gif")); //$NON-NLS-1$
+		this.data = data;
 	}
 
 	/**
 	 * Creates a new instance.
 	 */
-	public SelectExportOptionsPage() {
-		this(PAGE_NAME);
+	public SelectExportOptionsPage(ExportPatternData data) {
+		this(PAGE_NAME, data);
 	}
 
 	public void createControl(Composite parent) {
 		composite = createGridLayoutComposite(parent, 1);
 		
 		createLabel(composite, ExportPatternUIResources.selectedProcessLabel_text);
-		processText = createText(composite, "");
-		
-		createLabel(composite, ExportPatternUIResources.fileNameLabel_text);
-		fileNameText = new Text(composite, SWT.BORDER);
 		
 		createLabel(composite, ExportPatternUIResources.directoryLabel_text);
 		directoryText = new Text(composite, SWT.BORDER);
@@ -85,11 +74,11 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 				if (isValidPath(directoryText.getText().trim())) {
 					setPageComplete(true);
 					setErrorMessage(null);
+					data.setDirectory(getPath());
 				} else {
 					setPageComplete(false);
 					setErrorMessage(ExportPatternUIResources.invalidDirectory_error);
 				}
-				data.setDirectory(directoryText.getText().trim());
 			}
 		});
 		
@@ -105,6 +94,7 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 				if (path != null) {
 					directoryText.setText(path);
 					ok = isValidPath(path);
+					data.setDirectory(getPath());
 				}
 				setPageComplete(ok);
 				getWizard().getContainer().updateButtons();
@@ -124,6 +114,7 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 					String selectedDir = dialog.open();
 					if (selectedDir != null) {
 						directoryText.setText(selectedDir);
+						data.setDirectory(getPath());
 					}
 				} catch (Exception e) {
 					ExportPatternUIPlugin.getDefault().getLogger().logError(e);
@@ -136,10 +127,7 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 	 * @see org.eclipse.epf.ui.wizards.BaseWizardPage#onEnterPage(Object)
 	 */
 	public void onEnterPage(Object obj) {
-		if (obj != null && obj instanceof Process) {
-			Process process = (Process) obj;
-			processText.setText(process.getName());
-		}
+		// TODO
 	}
 	
 	/**
@@ -158,17 +146,7 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
 	 */
 	public boolean isPageComplete() {
-		return getFilename().length() > 0
-				&& getPath().length() > 0;
-	}
-	
-	/**
-	 * Gets the user specified filename.
-	 * 
-	 * @return a filename
-	 */
-	public String getFilename() {
-		return this.fileNameText.getText().trim();
+		return getPath().length() > 0;
 	}
 	
 	/**
@@ -178,23 +156,6 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 	 */
 	public String getPath() {
 		return this.directoryText.getText().trim();
-	}
-	
-	/**
-	 * Gets the user selected method configuration.
-	 */
-	public MethodConfiguration getMethodConfiguration() {
-		String configName = configCombo.getText().trim();
-		Scope scope = selectedProcess == null ? null : ProcessScopeUtil
-				.getInstance().loadScope(selectedProcess);
-		if (scope != null) {
-			if (scope.getName().equals(configName)) {
-				return scope;
-			}
-		}
-		MethodLibrary library = LibraryService.getInstance()
-				.getCurrentMethodLibrary();
-		return LibraryServiceUtil.getMethodConfiguration(library, configName);
 	}
 
 }

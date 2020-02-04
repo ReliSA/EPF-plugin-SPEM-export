@@ -81,7 +81,7 @@ public class ExportPatternXMLService implements IExportPatternService {
 	/**
 	 * 
 	 */
-	public void export(Collection<MethodPlugin> selectedPlugins) {
+	public void export() {
 		this.logger.logMessage("Exportig patterns.");
 		
 //		MethodConfiguration config = selectedPlugins.getDefaultContext();
@@ -90,7 +90,7 @@ public class ExportPatternXMLService implements IExportPatternService {
 //			config = ProcessScopeUtil.getInstance().loadScope(selectedPlugins);
 //		}
 		
-		for (MethodPlugin methodPlugin : selectedPlugins) {
+		for (MethodPlugin methodPlugin : data.getSelectedPlugins()) {
 			
 			
 			this.logger.logMessage("core content");
@@ -135,6 +135,7 @@ public class ExportPatternXMLService implements IExportPatternService {
 			Document doc = docBuilder.newDocument();
 			
 			Element rootElement = doc.createElement("pattern");
+			rootElement.setAttribute("name", methodPlugin.getName());
 			
 			for (Task task : tasks) {
 //				this.logger.logMessage("appending task");
@@ -210,8 +211,8 @@ public class ExportPatternXMLService implements IExportPatternService {
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
 			
-			String path = "C:\\Users\\user\\Desktop\\";
-			StreamResult result = new StreamResult(new File(path + methodPlugin.getName() + ".xml"));
+			String path = data.getDirectory() + "\\" + methodPlugin.getName() + ".xml";
+			StreamResult result = new StreamResult(new File(path));
 			transformer.transform(source, result);
 			this.logger.logMessage("Process exported.");
 			
