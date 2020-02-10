@@ -7,7 +7,9 @@ Bundle-Activator: org.eclipse.epf.export.pattern.ExportPatternPlugin
 Bundle-Localization: plugin
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
-Bundle-ClassPath: exportpattern.jar
+Bundle-ClassPath: exportpattern.jar,
+ lib/jooq-3.12.4.jar,
+ lib/jaxb-api-2.3.1.jar
 Export-Package: org.eclipse.epf.export.pattern
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.eclipse.epf.common;bundle-version="1.5.0",

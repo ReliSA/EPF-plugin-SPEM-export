@@ -36,6 +36,8 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 	
 	protected Composite composite;
 	
+	protected Composite templateComposite;
+	
 	protected Text directoryText;
 	
 	protected Button browseButton;
@@ -65,10 +67,10 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 	public void createControl(Composite parent) {
 		composite = createGridLayoutComposite(parent, 1);
 		
-		createLabel(composite, ExportPatternUIResources.selectedProcessLabel_text);
+		templateComposite = createGridLayoutComposite(composite, 3);
 		
-		createLabel(composite, ExportPatternUIResources.directoryLabel_text);
-		directoryText = new Text(composite, SWT.BORDER);
+		createLabel(templateComposite, ExportPatternUIResources.directoryLabel_text);
+		directoryText = new Text(templateComposite, SWT.BORDER);
 		directoryText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (isValidPath(directoryText.getText().trim())) {
@@ -82,7 +84,7 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 			}
 		});
 		
-		browseButton = new Button(composite, SWT.PUSH);
+		browseButton = new Button(templateComposite, SWT.PUSH);
 		browseButton.setLayoutData(new GridData(GridData.END));
 		browseButton.setText(ExportPatternUIResources.browseButton_text);
 		browseButton.addSelectionListener(new SelectionAdapter() {
