@@ -15,9 +15,10 @@ public class PatternWorkProduct {
 	@XmlElement(name = "name")
 	private String name;
 	
-	@XmlElement(name = "main_description")
-	private String mainDescription;
+	private String[] tokens;
 
+	private String amount;
+	
 	public String getGuid() {
 		return guid;
 	}
@@ -34,12 +35,37 @@ public class PatternWorkProduct {
 		this.name = name;
 	}
 
-	public String getMainDescription() {
-		return mainDescription;
+	public void setMainDescription(String mainDescription) {
+		String[] lines = mainDescription.split(System.getProperty("line.separator"));
+		for (String line : lines) {
+			if (line.startsWith("keywords")) {
+				this.setTokens(line.split("=")[1].split(","));
+			} else if (line.startsWith("amount")) {
+				this.setAmount(line);
+			} else {
+				// TODO
+			}
+		}
+	}
+	
+	public String[] getTokens() {
+		return tokens;
 	}
 
-	public void setMainDescription(String mainDescription) {
-		this.mainDescription = mainDescription;
+	public void setTokens(String[] tokens) {
+		this.tokens = tokens;
+	}
+
+	public String getAmount() {
+		return amount;
+	}
+
+	public void setAmount(String amount) {
+		this.amount = amount;
+	}
+
+	enum WorkProductTypeEnum {
+		
 	}
 
 }

@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.epf.export.pattern.ExportPatternData;
+import org.eclipse.epf.export.pattern.ExportPatternSQLService;
 import org.eclipse.epf.export.pattern.ExportPatternXMLService;
 import org.eclipse.epf.export.pattern.ui.ExportPatternUIResources;
 import org.eclipse.epf.export.services.PluginExportData;
@@ -128,17 +129,17 @@ public class ExportPatternWizard extends BaseWizard implements IExportWizard {
 	
 	public boolean doFinish() {
 		return exportPattern(patternData.selectedPlugins,
-				ExportPatternXMLService.getInstance(patternData));
+				ExportPatternSQLService.getInstance(patternData));
 	}
 	
 	public boolean exportPattern(Collection<MethodPlugin> selectedPlugins,
-			ExportPatternXMLService service) {
+			ExportPatternSQLService service) {
 		if (selectedPlugins == null || service == null) {
 			throw new IllegalArgumentException();
 		}
 
 
-		service = ExportPatternXMLService.getInstance(patternData);
+		service = ExportPatternSQLService.getInstance(patternData);
 		
 		service.export();
 		

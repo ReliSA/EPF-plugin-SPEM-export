@@ -2,35 +2,35 @@ package org.eclipse.epf.export.pattern.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "task")
-@XmlAccessorType (XmlAccessType.FIELD)
+import org.jooq.Record;
+import org.jooq.SelectJoinStep;
+import org.jooq.impl.DSL;
+
 public class PatternTask {
 	
-	@XmlElement(name = "guid")
 	private String guid;
 	
-	@XmlElement(name = "name")
 	private String name;
-
-	@XmlElement(name = "main_description")
-	private String mainDescription;
 	
-	@XmlElement(name = "inputs")
+	private String amount;
+
+	private String[] tokens;
+	
 	private List<PatternWorkProduct> inputs = new ArrayList<PatternWorkProduct>();
 	
-	@XmlElement(name = "optional_inputs")
 	private List<PatternWorkProduct> optionalInputs = new ArrayList<PatternWorkProduct>();
 	
-	@XmlElement(name = "outputs")
 	private List<PatternWorkProduct> outputs = new ArrayList<PatternWorkProduct>();
 	
-	@XmlElement(name = "phase")
+	private List<PatternRole> performers = new ArrayList<PatternRole>();
+	
 	private PatternPhase phase;
 	
 	public String getGuid() {
@@ -47,14 +47,6 @@ public class PatternTask {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getMainDescription() {
-		return mainDescription;
-	}
-
-	public void setMainDescription(String mainDescription) {
-		this.mainDescription = mainDescription;
 	}
 
 	public List<PatternWorkProduct> getInputs() {
@@ -87,6 +79,43 @@ public class PatternTask {
 
 	public void setPhase(PatternPhase phase) {
 		this.phase = phase;
+	}
+
+	public List<PatternRole> getPerformers() {
+		return performers;
+	}
+
+	public void setPerformers(List<PatternRole> performers) {
+		this.performers = performers;
+	}
+
+	public String getAmount() {
+		return amount;
+	}
+
+	public void setAmount(String amount) {
+		this.amount = amount;
+	}
+
+	public void setMainDescription(String mainDescription) {
+		String[] lines = mainDescription.split(System.getProperty("line.separator"));
+		for (String line : lines) {
+			if (line.startsWith("keywords")) {
+				this.setTokens(line.split("=")[1].split(","));
+			} else if (line.startsWith("amount")) {
+				this.setAmount(line);
+			} else {
+				// TODO
+			}
+		}
+	}
+
+	public String[] getTokens() {
+		return tokens;
+	}
+
+	public void setTokens(String[] tokens) {
+		this.tokens = tokens;
 	}
 
 }

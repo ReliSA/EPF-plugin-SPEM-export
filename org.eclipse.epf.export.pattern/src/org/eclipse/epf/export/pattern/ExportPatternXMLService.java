@@ -88,7 +88,7 @@ public class ExportPatternXMLService implements IExportPatternService {
 	 * 
 	 */
 	public void export() {
-		this.logger.logMessage("Exportig patterns.");
+		this.logger.logMessage("Exportig patterns to XML.");
 		
 //		MethodConfiguration config = selectedPlugins.getDefaultContext();
 //		
@@ -124,7 +124,7 @@ public class ExportPatternXMLService implements IExportPatternService {
 			MethodPackage pkg_disciplines = UmaUtil.findMethodPackage(methodPlugin,
 					ModelStructure.DEFAULT.disciplineDefinitionPath);
 			
-			PatternProject patternProject = ExportPatternMapService.map(methodPlugin);
+			PatternProject patternProject = ExportPatternMapService.map(methodPlugin, this.logger);
 			createXML(methodPlugin, patternProject);
 		}
 		
@@ -136,23 +136,23 @@ public class ExportPatternXMLService implements IExportPatternService {
 	 * @param methodPlugin
 	 */
 	public void createXML(MethodPlugin methodPlugin, PatternProject patternProject) {
-		this.logger.logMessage(String.valueOf(patternProject.getPatternTaskList().size()));
+		this.logger.logMessage(String.valueOf(patternProject.getPatternTasks().values().size()));
 		
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(PatternProject.class);
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 			 
 		    jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		     
+		    
 		    //Marshal the employees list in console
 		    jaxbMarshaller.marshal(patternProject, System.out);
-		     
+
 		    //Marshal the employees list in file
 			String path = data.getDirectory() + "\\" + methodPlugin.getName() + ".xml";
 			this.logger.logMessage(path);
 		    jaxbMarshaller.marshal(patternProject, new File(path));
 		} catch (JAXBException e) {
-			this.logger.logError("Marshalling Error", e);
+			this.logger.logError(e.getMessage(), e);
 			e.printStackTrace();
 		}
 	    

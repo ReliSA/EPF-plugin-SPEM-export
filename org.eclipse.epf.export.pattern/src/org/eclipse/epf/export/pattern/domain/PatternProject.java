@@ -1,14 +1,9 @@
 package org.eclipse.epf.export.pattern.domain;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.eclipse.epf.uma.Discipline;
 
 import javax.xml.bind.annotation.XmlAccessType;
 
@@ -16,51 +11,44 @@ import javax.xml.bind.annotation.XmlAccessType;
 @XmlAccessorType (XmlAccessType.FIELD)
 public class PatternProject {
 	
-	@XmlElement(name = "work_product")
-	private List<PatternWorkProduct> patternWorkProductList = new ArrayList<PatternWorkProduct>();
+	private HashMap<String, PatternWorkProduct> patternWorkProducts = new HashMap<String, PatternWorkProduct>();
 	
-	@XmlElement(name = "task")
-	private List<PatternTask> PatternTaskList = new ArrayList<PatternTask>();
+	private HashMap<String, PatternTask> patternTasks = new HashMap<String, PatternTask>();
 	
-	@XmlElement(name = "role")
-	private List<PatternRole> PatternRolesList = new ArrayList<PatternRole>();
+	private HashMap<String, PatternRole> patternRoles = new HashMap<String, PatternRole>();
 	
-	@XmlElement(name = "phases")
-	private List<PatternPhase> PatternPhasesList = new ArrayList<PatternPhase>();
-	
-	@XmlElement(name = "disciplines")
-	private List<PatternDiscipline> patternDisciplinesList = new ArrayList<PatternDiscipline>();
+	private HashMap<String, PatternPhase> patternPhases = new HashMap<String, PatternPhase>();
 
-	public List<PatternWorkProduct> getPatternWorkProductList() {
-		return patternWorkProductList;
+	public HashMap<String, PatternWorkProduct> getPatternWorkProducts() {
+		return patternWorkProducts;
 	}
 
-	public void setPatternWorkProductList(List<PatternWorkProduct> patternWorkProductList) {
-		this.patternWorkProductList = patternWorkProductList;
+	public void setPatternWorkProducts(HashMap<String, PatternWorkProduct> patternWorkProducts) {
+		this.patternWorkProducts = patternWorkProducts;
 	}
 
-	public List<PatternTask> getPatternTaskList() {
-		return PatternTaskList;
+	public HashMap<String, PatternTask> getPatternTasks() {
+		return patternTasks;
 	}
 
-	public void setPatternTaskList(List<PatternTask> patternTaskList) {
-		PatternTaskList = patternTaskList;
+	public void setPatternTasks(HashMap<String, PatternTask> patternTasks) {
+		this.patternTasks = patternTasks;
 	}
 
-	public List<PatternRole> getPatternRolesList() {
-		return PatternRolesList;
+	public HashMap<String, PatternRole> getPatternRoles() {
+		return patternRoles;
 	}
 
-	public void setPatternRolesList(List<PatternRole> patternRolesList) {
-		PatternRolesList = patternRolesList;
+	public void setPatternRoles(HashMap<String, PatternRole> patternRoles) {
+		this.patternRoles = patternRoles;
 	}
 
-	public List<PatternPhase> getPatternPhasesList() {
-		return PatternPhasesList;
+	public HashMap<String, PatternPhase> getPatternPhases() {
+		return patternPhases;
 	}
 
-	public void setPatternPhasesList(List<PatternPhase> patternPhasesList) {
-		PatternPhasesList = patternPhasesList;
+	public void setPatternPhases(HashMap<String, PatternPhase> patternPhases) {
+		this.patternPhases = patternPhases;
 	}
 	
 }
