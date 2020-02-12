@@ -71,6 +71,7 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 		
 		createLabel(templateComposite, ExportPatternUIResources.directoryLabel_text);
 		directoryText = new Text(templateComposite, SWT.BORDER);
+		directoryText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		directoryText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (isValidPath(directoryText.getText().trim())) {
