@@ -2,4 +2,9 @@
 	<locations>
 		<location path="C:\Users\user\Desktop\diplomka\epf-composer-1.5.2-win32\epf-composer" type="Profile"/>
 	</locations>
+	<environment>
+		<os>win32</os>
+		<ws>win32</ws>
+		<arch>x86</arch>
+	</environment>
 </target>
