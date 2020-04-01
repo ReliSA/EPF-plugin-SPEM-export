@@ -62,7 +62,7 @@ public class ExportPatternMapService {
 			}
 			patternWorkProduct.setGuid(workProduct.getGuid());
 			patternWorkProduct.setName(workProduct.getName());
-			patternWorkProduct.setMainDescription(workProduct.getPresentation().getMainDescription());
+			patternWorkProduct.setMainDescription(workProduct.getPresentation().getMainDescription(), logger);
 			patternProject.getPatternWorkProducts().put(patternWorkProduct.getGuid(), patternWorkProduct);
 		}
 
@@ -71,7 +71,7 @@ public class ExportPatternMapService {
 			PatternTask patternTask = new PatternTask();
 			patternTask.setGuid(task.getGuid());
 			patternTask.setName(task.getName());
-			patternTask.setMainDescription(task.getPresentation().getMainDescription());
+			patternTask.setMainDescription(task.getPresentation().getMainDescription(), logger);
 
 			patternProject.getPatternTasks().put(patternTask.getGuid(), patternTask);
 

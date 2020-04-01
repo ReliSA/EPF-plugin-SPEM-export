@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.eclipse.epf.export.pattern.domain.PatternArtifact;
 import org.eclipse.epf.export.pattern.domain.PatternOutcome;
@@ -65,14 +66,24 @@ public class ExportPatternSQLService implements IExportPatternService {
 
 	public String generateSql(String[] tokens, List<PatternWorkProduct> outputs, List<PatternRole> roles) {
 
-		String start = "SELECT COUNT(*) FROM work_item wi";
-
 		List<String> joins = new ArrayList<String>();
 		joins.add("JOIN person p ON p.id = wi.authorId");
 
 		List<String> conditions = new ArrayList<String>();
 		conditions.add("AND p.projectId = PROJECT_ID");
 
+		addRoleConstraint(conditions, joins, roles);
+		
+		addTypeConstraint(conditions, outputs);
+
+		addNameConstraint(conditions, tokens);
+
+		String result = assembleBasicQuery(joins, conditions);
+
+		return result;
+	}
+
+	private void addRoleConstraint(List<String> conditions, List<String> joins, List<PatternRole> roles) {
 		if (!roles.isEmpty()) {
 			joins.add("JOIN person_role pr ON p.id = pr.personId");
 			joins.add("JOIN role ON r.id = pr.roleId");
@@ -88,7 +99,9 @@ public class ExportPatternSQLService implements IExportPatternService {
 
 			conditions.add(roleCondition);
 		}
-		
+	}
+
+	private void addTypeConstraint(List<String> conditions, List<PatternWorkProduct> outputs) {
 		if (outputs.isEmpty()) {
 			
 			conditions.add("AND wi.workItemType = 'WORK_UNIT'");
@@ -106,24 +119,17 @@ public class ExportPatternSQLService implements IExportPatternService {
 				} else {
 					// TODO
 				}
+				
+				addNameConstraint(conditions, output.getTokens());
 			}
 		}
+		
+	}
 
-		if (tokens != null && tokens.length != 0) {
-
-			String likeCondition = "AND (";
-
-			for (String token : tokens) {
-				likeCondition += "wi.name LIKE '%" + token + "%'";
-			}
-
-			likeCondition += ")";
-
-			conditions.add(likeCondition);
-
-		}
-
+	private String assembleBasicQuery(List<String> joins, List<String> conditions) {
 		String result = "";
+		String start = "SELECT COUNT(*) FROM work_item wi";
+		
 		result += start;
 
 		for (String join : joins) {
@@ -133,9 +139,26 @@ public class ExportPatternSQLService implements IExportPatternService {
 		for (String cond : conditions) {
 			result += "\n" + cond;
 		}
-
 		return result;
+	}
 
+	private void addNameConstraint(List<String> conditions, String[] tokens) {
+		this.logger.logMessage("tokens " + Arrays.toString(tokens));
+		if (tokens != null && tokens.length != 0) {
+
+			String likeCondition = "AND (";
+
+			for (int i = 0; i < tokens.length; i++) {
+				if (i != 0) {
+					likeCondition += " OR ";
+				}
+				likeCondition += "wi.name LIKE '%" + tokens[i] + "%'";
+			}
+
+			likeCondition += ")";
+
+			conditions.add(likeCondition);
+		}
 	}
 
 }

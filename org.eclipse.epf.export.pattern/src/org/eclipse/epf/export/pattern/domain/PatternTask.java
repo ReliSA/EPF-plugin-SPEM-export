@@ -1,6 +1,7 @@
 package org.eclipse.epf.export.pattern.domain;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -9,6 +10,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.eclipse.epf.export.pattern.ExportPatternLogger;
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
@@ -97,9 +99,10 @@ public class PatternTask {
 		this.amount = amount;
 	}
 
-	public void setMainDescription(String mainDescription) {
+	public void setMainDescription(String mainDescription, ExportPatternLogger logger) {
 		String[] lines = mainDescription.split(System.getProperty("line.separator"));
 		for (String line : lines) {
+			line = line.replaceAll("\\<.*?>","").trim();
 			if (line.startsWith("keywords")) {
 				this.setTokens(line.split("=")[1].split(","));
 			} else if (line.startsWith("amount")) {

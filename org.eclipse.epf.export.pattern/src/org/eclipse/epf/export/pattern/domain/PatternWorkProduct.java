@@ -1,9 +1,13 @@
 package org.eclipse.epf.export.pattern.domain;
 
+import java.util.Arrays;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.eclipse.epf.export.pattern.ExportPatternLogger;
 
 @XmlRootElement(name = "work_product")
 @XmlAccessorType (XmlAccessType.FIELD)
@@ -35,15 +39,16 @@ public class PatternWorkProduct {
 		this.name = name;
 	}
 
-	public void setMainDescription(String mainDescription) {
+	public void setMainDescription(String mainDescription, ExportPatternLogger logger) {
 		String[] lines = mainDescription.split(System.getProperty("line.separator"));
 		for (String line : lines) {
+			line = line.replaceAll("\\<.*?>","").trim();
 			if (line.startsWith("keywords")) {
 				this.setTokens(line.split("=")[1].split(","));
 			} else if (line.startsWith("amount")) {
 				this.setAmount(line);
 			} else {
-				// TODO
+				logger.logWarning("Invalid parameter" + line);
 			}
 		}
 	}
