@@ -46,13 +46,15 @@ public class ExportPatternSQLService implements IExportPatternService {
 
 	private void createSQLScript(MethodPlugin methodPlugin, PatternProject patternProject) {
 
+		// creating SQL file
 		String path = data.getDirectory() + "\\" + methodPlugin.getName() + ".sql";
 		PrintWriter writer;
 		try {
 			writer = new PrintWriter(new FileWriter(path));		
 			
+			// for each task in method plug-in
 			for (PatternTask patternTask : patternProject.getPatternTasks().values()) {
-				writer.println(generateSql(patternTask.getTokens(), patternTask.getOutputs(), patternTask.getPerformers()));
+				writer.println(generateSql(patternTask, patternProject.isPattern()));
 				writer.println();
 			}
 
@@ -64,7 +66,38 @@ public class ExportPatternSQLService implements IExportPatternService {
 		
 	}
 
-	public String generateSql(String[] tokens, List<PatternWorkProduct> outputs, List<PatternRole> roles) {
+	private String generateSql(PatternTask patternTask, boolean isPattern) {
+		String sql = String.format("SELECT (CASE WHEN COUNT(*) > 0 THEN %d ELSE %d END) FROM", isPattern ? 0 : 1, isPattern ? 1 : 0);
+		
+		if (patternTask.getAmount() == null || patternTask.getAmount().isEmpty()) {
+			sql += generateBasicSql(patternTask.getTokens(), patternTask.getOutputs(), patternTask.getPerformers());
+		} else {
+			sql += generateRateSql(patternTask.getTokens(), patternTask.getOutputs(), patternTask.getPerformers(), patternTask.getAmount());
+		}
+		return sql;
+	}
+
+	private String generateRateSql(String[] tokens, List<PatternWorkProduct> outputs, List<PatternRole> performers, String amount) {
+		String sql = "";
+		String start = "\n(SELECT COUNT(*) as sum FROM ";
+		sql += start;
+		sql += generateBasicSql(tokens, outputs, performers);
+		sql += ")\r\nAS a,";
+		sql += start;
+		sql += generateBasicSql(null, outputs, performers);
+		sql += ")\r\nAS b";
+		sql += addRateCondition(amount);
+		return sql;
+	}
+
+	private String addRateCondition(String amount) {
+		String[] tokens = amount.trim().split("( )*(amount)( )*|( )*(this.type)( )*(/)( )*");
+		String sign = tokens[1].replace("&lt;", "<").replace("&gt;", ">");
+		
+		return String.format("\nWHERE a.sum %s (b.sum/%s)", sign, tokens[2]);
+	}
+
+	public String generateBasicSql(String[] tokens, List<PatternWorkProduct> outputs, List<PatternRole> roles) {
 
 		List<String> joins = new ArrayList<String>();
 		joins.add("JOIN person p ON p.id = wi.authorId");
@@ -78,9 +111,7 @@ public class ExportPatternSQLService implements IExportPatternService {
 
 		addNameConstraint(conditions, tokens);
 
-		String result = assembleBasicQuery(joins, conditions);
-
-		return result;
+		return assembleBasicQuery(joins, conditions);
 	}
 
 	private void addRoleConstraint(List<String> conditions, List<String> joins, List<PatternRole> roles) {
@@ -108,6 +139,7 @@ public class ExportPatternSQLService implements IExportPatternService {
 			
 		} else {
 			for (PatternWorkProduct output : outputs) {
+				
 				if (output instanceof PatternArtifact) {
 
 					conditions.add("AND wi.workItemType = 'ARTIFACT'");
@@ -126,22 +158,33 @@ public class ExportPatternSQLService implements IExportPatternService {
 		
 	}
 
+	/**
+	 * 
+	 * @param joins
+	 * @param conditions
+	 * @return
+	 */
 	private String assembleBasicQuery(List<String> joins, List<String> conditions) {
 		String result = "";
-		String start = "SELECT COUNT(*) FROM work_item wi";
+		String start = "work_item wi";
 		
 		result += start;
 
 		for (String join : joins) {
-			result += "\n" + join;
+			result += "\n\t" + join;
 		}
 
 		for (String cond : conditions) {
-			result += "\n" + cond;
+			result += "\n\t" + cond;
 		}
 		return result;
 	}
 
+	/**
+	 * 
+	 * @param conditions
+	 * @param tokens
+	 */
 	private void addNameConstraint(List<String> conditions, String[] tokens) {
 		this.logger.logMessage("tokens " + Arrays.toString(tokens));
 		if (tokens != null && tokens.length != 0) {

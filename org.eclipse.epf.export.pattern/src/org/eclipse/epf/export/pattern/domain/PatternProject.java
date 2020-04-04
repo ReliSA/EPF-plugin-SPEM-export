@@ -1,5 +1,6 @@
 package org.eclipse.epf.export.pattern.domain;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -18,6 +19,8 @@ public class PatternProject {
 	private HashMap<String, PatternRole> patternRoles = new HashMap<String, PatternRole>();
 	
 	private HashMap<String, PatternPhase> patternPhases = new HashMap<String, PatternPhase>();
+	
+	private boolean isPattern = false;
 
 	public HashMap<String, PatternWorkProduct> getPatternWorkProducts() {
 		return patternWorkProducts;
@@ -49,6 +52,14 @@ public class PatternProject {
 
 	public void setPatternPhases(HashMap<String, PatternPhase> patternPhases) {
 		this.patternPhases = patternPhases;
+	}
+
+	public boolean isPattern() {
+		return isPattern;
+	}
+
+	public void setPattern(boolean isPattern) {
+		this.isPattern = isPattern;
 	}
 	
 }

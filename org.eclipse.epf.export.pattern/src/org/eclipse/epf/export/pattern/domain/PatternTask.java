@@ -15,7 +15,7 @@ import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
-public class PatternTask {
+public class PatternTask implements Descriptable {
 	
 	private String guid;
 	
@@ -97,20 +97,6 @@ public class PatternTask {
 
 	public void setAmount(String amount) {
 		this.amount = amount;
-	}
-
-	public void setMainDescription(String mainDescription, ExportPatternLogger logger) {
-		String[] lines = mainDescription.split(System.getProperty("line.separator"));
-		for (String line : lines) {
-			line = line.replaceAll("\\<.*?>","").trim();
-			if (line.startsWith("keywords")) {
-				this.setTokens(line.split("=")[1].split(","));
-			} else if (line.startsWith("amount")) {
-				this.setAmount(line);
-			} else {
-				// TODO
-			}
-		}
 	}
 
 	public String[] getTokens() {

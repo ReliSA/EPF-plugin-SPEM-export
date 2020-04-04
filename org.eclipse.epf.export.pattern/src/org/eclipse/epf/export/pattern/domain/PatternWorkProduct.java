@@ -11,7 +11,7 @@ import org.eclipse.epf.export.pattern.ExportPatternLogger;
 
 @XmlRootElement(name = "work_product")
 @XmlAccessorType (XmlAccessType.FIELD)
-public class PatternWorkProduct {
+public class PatternWorkProduct implements Descriptable {
 	
 	@XmlElement(name = "guid")
 	private String guid;
@@ -20,8 +20,8 @@ public class PatternWorkProduct {
 	private String name;
 	
 	private String[] tokens;
-
-	private String amount;
+	
+	private PatternTask task;
 	
 	public String getGuid() {
 		return guid;
@@ -38,20 +38,6 @@ public class PatternWorkProduct {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	public void setMainDescription(String mainDescription, ExportPatternLogger logger) {
-		String[] lines = mainDescription.split(System.getProperty("line.separator"));
-		for (String line : lines) {
-			line = line.replaceAll("\\<.*?>","").trim();
-			if (line.startsWith("keywords")) {
-				this.setTokens(line.split("=")[1].split(","));
-			} else if (line.startsWith("amount")) {
-				this.setAmount(line);
-			} else {
-				logger.logWarning("Invalid parameter" + line);
-			}
-		}
-	}
 	
 	public String[] getTokens() {
 		return tokens;
@@ -61,12 +47,12 @@ public class PatternWorkProduct {
 		this.tokens = tokens;
 	}
 
-	public String getAmount() {
-		return amount;
+	public PatternTask getTask() {
+		return task;
 	}
 
-	public void setAmount(String amount) {
-		this.amount = amount;
+	public void setTask(PatternTask task) {
+		this.task = task;
 	}
 
 	enum WorkProductTypeEnum {

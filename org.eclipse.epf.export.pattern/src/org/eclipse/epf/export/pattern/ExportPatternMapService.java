@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
+import org.eclipse.epf.export.pattern.domain.Descriptable;
 import org.eclipse.epf.export.pattern.domain.PatternArtifact;
 import org.eclipse.epf.export.pattern.domain.PatternDiscipline;
 import org.eclipse.epf.export.pattern.domain.PatternOutcome;
@@ -41,6 +42,7 @@ public class ExportPatternMapService {
 		logger = exportPatternLogger;
 
 		PatternProject patternProject = new PatternProject();
+		parseMethodPluginDescription(patternProject, methodPlugin.getBriefDescription());
 
 		DisciplineCategoriesItemProvider disciplineProvider = (DisciplineCategoriesItemProvider) TngUtil
 				.getDisciplineCategoriesItemProvider(methodPlugin);
@@ -50,45 +52,18 @@ public class ExportPatternMapService {
 			patternDiscipline.setName(discipline.getName());
 		}
 
-		List<WorkProduct> workProducts = ProcessUtil.getAllWorkProducts(methodPlugin);
-		for (WorkProduct workProduct : workProducts) {
-			PatternWorkProduct patternWorkProduct = null;
-			if (workProduct instanceof Artifact) {
-				patternWorkProduct = new PatternArtifact();
-			} else if (workProduct instanceof Outcome) {
-				patternWorkProduct = new PatternOutcome();
-			} else {
-				logger.logWarning("Invalid work product type of " + workProduct.getName());
-			}
-			patternWorkProduct.setGuid(workProduct.getGuid());
-			patternWorkProduct.setName(workProduct.getName());
-			patternWorkProduct.setMainDescription(workProduct.getPresentation().getMainDescription(), logger);
-			patternProject.getPatternWorkProducts().put(patternWorkProduct.getGuid(), patternWorkProduct);
-		}
-
 		List<Task> tasks = ProcessUtil.getAllTasks(methodPlugin);
 		for (Task task : tasks) {
 			PatternTask patternTask = new PatternTask();
 			patternTask.setGuid(task.getGuid());
 			patternTask.setName(task.getName());
-			patternTask.setMainDescription(task.getPresentation().getMainDescription(), logger);
+			parseMainDescription(patternTask, task.getPresentation().getMainDescription());
 
 			patternProject.getPatternTasks().put(patternTask.getGuid(), patternTask);
 
-			List<WorkProduct> mandatoryInputs = task.getMandatoryInput();
-			for (WorkProduct mandatoryInput : mandatoryInputs) {
-				patternTask.getInputs().add(patternProject.getPatternWorkProducts().get(mandatoryInput.getGuid()));
-			}
-
-			List<WorkProduct> optionalInputs = task.getOptionalInput();
-			for (WorkProduct optionalInput : optionalInputs) {
-				patternTask.getOptionalInputs()
-						.add(patternProject.getPatternWorkProducts().get(optionalInput.getGuid()));
-			}
-
 			List<WorkProduct> outputs = task.getOutput();
 			for (WorkProduct output : outputs) {
-				patternTask.getOutputs().add(patternProject.getPatternWorkProducts().get(output.getGuid()));
+				mapWorkProduct(patternProject, output, patternTask);
 			}
 
 			List<org.eclipse.epf.uma.Role> performers = task.getPerformedBy();
@@ -169,5 +144,59 @@ public class ExportPatternMapService {
 			}
 		}
 	}
+	
+	private static void mapWorkProduct(PatternProject patternProject, WorkProduct workProduct, PatternTask patternTask) {
+		PatternWorkProduct patternWorkProduct = null;
+		if (workProduct instanceof Artifact) {
+			patternWorkProduct = new PatternArtifact();
+		} else if (workProduct instanceof Outcome) {
+			patternWorkProduct = new PatternOutcome();
+		} else {
+			logger.logWarning("Invalid work product type of " + workProduct.getName());
+		}
+		patternTask.getOutputs().add(patternWorkProduct);
+		patternWorkProduct.setTask(patternTask);
+		patternWorkProduct.setGuid(workProduct.getGuid());
+		patternWorkProduct.setName(workProduct.getName());
+		parseMainDescription(patternWorkProduct, workProduct.getPresentation().getMainDescription());
+		patternProject.getPatternWorkProducts().put(patternWorkProduct.getGuid(), patternWorkProduct);
+	}
 
+	private static void parseMainDescription(Descriptable descriptable, String mainDescription) {
+		String[] lines = mainDescription.split(System.getProperty("line.separator"));
+		for (String line : lines) {
+			line = line.replaceAll("\\<.*?>","").trim();
+			if (line.startsWith("keywords")) {
+				descriptable.setTokens(line.split("=")[1].split(","));
+			} else if (line.startsWith("amount")) {
+				logger.logMessage(line);
+				if (descriptable instanceof PatternTask) {
+					logger.logMessage("task");
+					((PatternTask) descriptable).setAmount(line);
+				} else if (descriptable instanceof PatternWorkProduct) {
+					logger.logMessage("wp");
+					((PatternWorkProduct) descriptable).getTask().setAmount(line);
+					logger.logMessage(((PatternWorkProduct) descriptable).getTask().getAmount());
+				} else {
+					logger.logWarning("Amount parsing error.");
+				}
+			} else {
+				logger.logWarning("Invalid parameter" + line);
+			}
+		}
+	}
+	
+	private static void parseMethodPluginDescription(PatternProject project, String description) {
+		String[] lines = description.split(System.getProperty("line.separator"));
+		for (String line : lines) {
+			line = line.replaceAll("\\<.*?>","").trim();
+			if (line.startsWith("pattern")) {
+				logger.logMessage("is pattern " + line.split("=")[1]);
+				project.setPattern(Boolean.parseBoolean(line.split("=")[1]));
+			} else {
+				logger.logWarning("Invalid parameter" + line);
+			}
+		}
+	}
+	
 }
