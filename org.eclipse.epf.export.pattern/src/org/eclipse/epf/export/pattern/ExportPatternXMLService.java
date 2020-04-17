@@ -67,21 +67,21 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class ExportPatternXMLService implements IExportPatternService {
+public class ExportPatternXMLService implements IExportPatternSpecificService {
 	
 	ExportPatternData data;
 	
-	ExportPatternLogger logger = null;
+	ExportPatternLogger logger;
 	
 	static List<PatternProject> patternProjects = new ArrayList<PatternProject>();
 	
-	public ExportPatternXMLService(ExportPatternData data) {
+	public ExportPatternXMLService(ExportPatternData data, ExportPatternLogger logger) {
 		this.data = data;
-		logger = new ExportPatternLogger(new File(System.getProperty("user.dir")), "xml");
+		this.logger = logger;
 	}
 	
-	public static ExportPatternXMLService getInstance(ExportPatternData data) {	
-		return new ExportPatternXMLService(data);
+	public static ExportPatternXMLService getInstance(ExportPatternData data, ExportPatternLogger logger) {	
+		return new ExportPatternXMLService(data, logger);
 	}
 	
 	/**

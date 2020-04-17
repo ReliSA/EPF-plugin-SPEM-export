@@ -18,7 +18,7 @@ public class ExportPatternLogger extends FileLogger {
 	/**
 	 * Creates new instance of logger.
 	 */
-	public ExportPatternLogger(File logRoot, String specFolder) {
-		super(new File(logRoot, LOGS_FOLDER + specFolder));
+	public ExportPatternLogger(File logRoot) {
+		super(new File(logRoot, LOGS_FOLDER));
 	}
 }

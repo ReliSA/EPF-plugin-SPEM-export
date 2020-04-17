@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import org.eclipse.epf.uma.MethodPlugin;
 
-public interface IExportPatternService {
+public interface IExportPatternSpecificService {
 	
 	public void export() throws ExportPatternServiceException;
 

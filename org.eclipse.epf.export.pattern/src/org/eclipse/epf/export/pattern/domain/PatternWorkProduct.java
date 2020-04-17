@@ -19,8 +19,6 @@ public class PatternWorkProduct implements Descriptable {
 	@XmlElement(name = "name")
 	private String name;
 	
-	private String[] tokens;
-	
 	private PatternTask task;
 	
 	public String getGuid() {
@@ -37,14 +35,6 @@ public class PatternWorkProduct implements Descriptable {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-	
-	public String[] getTokens() {
-		return tokens;
-	}
-
-	public void setTokens(String[] tokens) {
-		this.tokens = tokens;
 	}
 
 	public PatternTask getTask() {

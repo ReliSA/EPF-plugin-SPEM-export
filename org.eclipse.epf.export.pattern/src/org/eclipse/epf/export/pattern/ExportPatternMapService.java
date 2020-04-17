@@ -167,18 +167,21 @@ public class ExportPatternMapService {
 		for (String line : lines) {
 			line = line.replaceAll("\\<.*?>","").trim();
 			if (line.startsWith("keywords")) {
-				descriptable.setTokens(line.split("=")[1].split(","));
-			} else if (line.startsWith("amount")) {
-				logger.logMessage(line);
+				String[] tokens = line.split("=")[1].split(",");
 				if (descriptable instanceof PatternTask) {
-					logger.logMessage("task");
+					((PatternTask) descriptable).setTokens(tokens);
+				} else if (descriptable instanceof PatternWorkProduct) {
+					((PatternWorkProduct) descriptable).getTask().setTokens(tokens);
+				} else {
+					logger.logWarning(String.format("Element with GUID %s: Keywords attribute parsing error.", descriptable.getGuid()));
+				}
+			} else if (line.startsWith("amount")) {
+				if (descriptable instanceof PatternTask) {
 					((PatternTask) descriptable).setAmount(line);
 				} else if (descriptable instanceof PatternWorkProduct) {
-					logger.logMessage("wp");
 					((PatternWorkProduct) descriptable).getTask().setAmount(line);
-					logger.logMessage(((PatternWorkProduct) descriptable).getTask().getAmount());
 				} else {
-					logger.logWarning("Amount parsing error.");
+					logger.logWarning(String.format("Element with GUID %s: Amount attribute parsing error.", descriptable.getGuid()));
 				}
 			} else {
 				logger.logWarning("Invalid parameter" + line);

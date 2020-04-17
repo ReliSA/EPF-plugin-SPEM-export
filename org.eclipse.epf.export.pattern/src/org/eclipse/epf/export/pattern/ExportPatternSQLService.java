@@ -1,6 +1,5 @@
 package org.eclipse.epf.export.pattern;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,7 +14,7 @@ import org.eclipse.epf.export.pattern.domain.PatternTask;
 import org.eclipse.epf.export.pattern.domain.PatternWorkProduct;
 import org.eclipse.epf.uma.MethodPlugin;
 
-public class ExportPatternSQLService implements IExportPatternService {
+public class ExportPatternSQLService implements IExportPatternSpecificService {
 
 	ExportPatternData data;
 
@@ -23,13 +22,13 @@ public class ExportPatternSQLService implements IExportPatternService {
 
 	static List<PatternProject> patternProjects = new ArrayList<PatternProject>();
 
-	public ExportPatternSQLService(ExportPatternData data) {
+	public ExportPatternSQLService(ExportPatternData data, ExportPatternLogger logger) {
 		this.data = data;
-		this.logger = new ExportPatternLogger(new File(System.getProperty("user.dir")), "sql");
+		this.logger = logger;
 	}
 
-	public static ExportPatternSQLService getInstance(ExportPatternData data) {
-		return new ExportPatternSQLService(data);
+	public static ExportPatternSQLService getInstance(ExportPatternData data, ExportPatternLogger logger) {
+		return new ExportPatternSQLService(data, logger);
 	}
 
 	public void export() {
@@ -67,7 +66,7 @@ public class ExportPatternSQLService implements IExportPatternService {
 	}
 
 	private String generateSql(PatternTask patternTask, boolean isPattern) {
-		String sql = String.format("SELECT (CASE WHEN COUNT(*) > 0 THEN %d ELSE %d END) FROM", isPattern ? 0 : 1, isPattern ? 1 : 0);
+		String sql = String.format("SELECT (CASE WHEN COUNT(*) > 0 THEN %d ELSE %d END) FROM ", isPattern ? 0 : 1, isPattern ? 1 : 0);
 		
 		if (patternTask.getAmount() == null || patternTask.getAmount().isEmpty()) {
 			sql += generateBasicSql(patternTask.getTokens(), patternTask.getOutputs(), patternTask.getPerformers());
@@ -151,8 +150,6 @@ public class ExportPatternSQLService implements IExportPatternService {
 				} else {
 					// TODO
 				}
-				
-				addNameConstraint(conditions, output.getTokens());
 			}
 		}
 		
