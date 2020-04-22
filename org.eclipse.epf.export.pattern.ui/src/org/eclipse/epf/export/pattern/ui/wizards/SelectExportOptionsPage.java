@@ -5,24 +5,20 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.epf.export.pattern.ExportPatternData;
 import org.eclipse.epf.export.pattern.ui.ExportPatternUIPlugin;
 import org.eclipse.epf.export.pattern.ui.ExportPatternUIResources;
-import org.eclipse.epf.library.LibraryService;
-import org.eclipse.epf.library.LibraryServiceUtil;
-import org.eclipse.epf.library.edit.util.ProcessScopeUtil;
 import org.eclipse.epf.ui.wizards.BaseWizardPage;
-import org.eclipse.epf.uma.MethodConfiguration;
-import org.eclipse.epf.uma.MethodLibrary;
-import org.eclipse.epf.uma.Process;
-import org.eclipse.epf.uma.util.Scope;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -38,6 +34,10 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 	protected Composite templateComposite;
 	
 	protected Text directoryText;
+	
+	protected Button exportSql;
+	
+	protected Button exportXml;
 	
 	protected Button browseButton;
 	
@@ -102,6 +102,33 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 				getWizard().getContainer().updateButtons();
 			}
 		});
+		
+		Group formatGroup = new Group(templateComposite, SWT.NONE);
+		formatGroup.setLayout(new RowLayout(SWT.HORIZONTAL));
+		
+		Label label = new Label(formatGroup, SWT.NONE);
+        label.setText("Export format: ");
+		
+		exportSql = new Button(formatGroup, SWT.CHECK);
+		exportSql.setText("SQL");
+		exportSql.addSelectionListener(new SelectionAdapter() {
+	        @Override
+	        public void widgetSelected(SelectionEvent event) {
+	            Button btn = (Button) event.getSource();
+	            data.setExportSql(btn.getSelection());
+	        }
+	    });
+		exportSql.setSelection(true);
+		
+		exportXml = new Button(formatGroup, SWT.CHECK);
+		exportXml.setText("XML");
+		exportXml.addSelectionListener(new SelectionAdapter() {
+	        @Override
+	        public void widgetSelected(SelectionEvent event) {
+	            Button btn = (Button) event.getSource();
+	            data.setExportXml(btn.getSelection());
+	        }
+	    });
 		
 		initControls();
 		

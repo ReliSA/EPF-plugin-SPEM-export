@@ -1,20 +1,8 @@
 package org.eclipse.epf.export.pattern;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
-import javax.management.relation.Role;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -25,45 +13,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.util.ExtendedMetaData;
-import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
-import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
-import org.eclipse.epf.export.pattern.domain.PatternPhase;
 import org.eclipse.epf.export.pattern.domain.PatternProject;
+import org.eclipse.epf.export.pattern.domain.PatternRole;
 import org.eclipse.epf.export.pattern.domain.PatternTask;
 import org.eclipse.epf.export.pattern.domain.PatternWorkProduct;
-import org.eclipse.epf.library.edit.TngAdapterFactory;
-import org.eclipse.epf.library.edit.process.BreakdownElementWrapperItemProvider;
-import org.eclipse.epf.library.edit.process.RoleDescriptorWrapperItemProvider;
-import org.eclipse.epf.library.edit.util.ConfigurableComposedAdapterFactory;
-import org.eclipse.epf.library.edit.util.ModelStructure;
-import org.eclipse.epf.library.edit.util.ProcessScopeUtil;
-import org.eclipse.epf.library.edit.util.ProcessUtil;
-import org.eclipse.epf.library.edit.util.TngUtil;
-import org.eclipse.epf.uma.Activity;
-import org.eclipse.epf.uma.BreakdownElement;
-import org.eclipse.epf.uma.CustomCategory;
-import org.eclipse.epf.uma.DeliveryProcess;
-import org.eclipse.epf.uma.Kind;
-import org.eclipse.epf.uma.MethodConfiguration;
-import org.eclipse.epf.uma.MethodElementProperty;
-import org.eclipse.epf.uma.MethodPackage;
-import org.eclipse.epf.uma.MethodPlugin;
-import org.eclipse.epf.uma.Phase;
-import org.eclipse.epf.uma.Process;
-import org.eclipse.epf.uma.RoleDescriptor;
-import org.eclipse.epf.uma.Task;
-import org.eclipse.epf.uma.TaskDescriptor;
-import org.eclipse.epf.uma.UmaFactory;
-import org.eclipse.epf.uma.UmaPackage;
-import org.eclipse.epf.uma.WorkBreakdownElement;
-import org.eclipse.epf.uma.WorkOrder;
-import org.eclipse.epf.uma.WorkProduct;
-import org.eclipse.epf.uma.WorkProductDescriptor;
-import org.eclipse.epf.uma.util.UmaUtil;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -71,9 +24,7 @@ public class ExportPatternXMLService implements IExportPatternSpecificService {
 	
 	ExportPatternData data;
 	
-	ExportPatternLogger logger;
-	
-	static List<PatternProject> patternProjects = new ArrayList<PatternProject>();
+	ExportPatternLogger logger = null;
 	
 	public ExportPatternXMLService(ExportPatternData data, ExportPatternLogger logger) {
 		this.data = data;
@@ -84,78 +35,82 @@ public class ExportPatternXMLService implements IExportPatternSpecificService {
 		return new ExportPatternXMLService(data, logger);
 	}
 	
-	/**
-	 * 
-	 */
-	public void export() {
+	public void export(List<PatternProject> patternProjects) {
 		this.logger.logMessage("Exportig patterns to XML.");
 		
-//		MethodConfiguration config = selectedPlugins.getDefaultContext();
-//		
-//		if (config == null) {
-//			config = ProcessScopeUtil.getInstance().loadScope(selectedPlugins);
-//		}
-		
-		for (MethodPlugin methodPlugin : data.getSelectedPlugins()) {
-			
-			
-			this.logger.logMessage("core content");
-			MethodPackage pkg_core_content = UmaUtil.findMethodPackage(methodPlugin,
-					ModelStructure.DEFAULT.coreContentPath);
-			this.logger.logMessage("name: " + pkg_core_content.getName());
-			
-			 UmaUtil.findMethodPackage(methodPlugin,
-						ModelStructure.DEFAULT.processContributionPath);
-			
-			Set<CustomCategory> customCategories = TngUtil.getAllCustomCategories(methodPlugin);
-			this.logger.logMessage("custom categories");
-			for (CustomCategory customCategory : customCategories) {
-				this.logger.logMessage("name: " + customCategory.getName());
-			}
-			
-			this.logger.logMessage("method packages");
-			List<MethodPackage> methodPackages =  methodPlugin.getMethodPackages();
-			for (MethodPackage methodPackage : methodPackages) {
-				this.logger.logMessage(methodPackage.getName());
-			}
-			
-			TngUtil.getDisciplineCategoriesItemProvider(methodPlugin);
-			
-			MethodPackage pkg_disciplines = UmaUtil.findMethodPackage(methodPlugin,
-					ModelStructure.DEFAULT.disciplineDefinitionPath);
-			
-			PatternProject patternProject = ExportPatternMapService.map(methodPlugin, this.logger);
-			createXML(methodPlugin, patternProject);
+		for (PatternProject patternProject : patternProjects) {
+			createXML(patternProject);
 		}
-		
-		return;
 	}
 	
-	/**
-	 * 
-	 * @param methodPlugin
-	 */
-	public void createXML(MethodPlugin methodPlugin, PatternProject patternProject) {
-		this.logger.logMessage(String.valueOf(patternProject.getPatternTasks().values().size()));
+	public void createXML(PatternProject patternProject) {
 		
 		try {
-			JAXBContext jaxbContext = JAXBContext.newInstance(PatternProject.class);
-			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-			 
-		    jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		    
-		    //Marshal the employees list in console
-		    jaxbMarshaller.marshal(patternProject, System.out);
-
-		    //Marshal the employees list in file
-			String path = data.getDirectory() + "\\" + methodPlugin.getName() + ".xml";
-			this.logger.logMessage(path);
-		    jaxbMarshaller.marshal(patternProject, new File(path));
-		} catch (JAXBException e) {
-			this.logger.logError(e.getMessage(), e);
-			e.printStackTrace();
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			
+			Document doc = docBuilder.newDocument();
+			
+			Element rootElement = doc.createElement("pattern");
+			
+			for (PatternTask task : patternProject.getPatternTasks().values()) {
+				Element taskElement = doc.createElement("task");
+				taskElement.setAttribute("name", task.getName());
+				taskElement.setAttribute("guid", task.getGuid());
+				taskElement.setAttribute("amount", task.getAmount());
+				
+				List<PatternWorkProduct> outputs = task.getOutputs();
+				for (PatternWorkProduct output : outputs) {
+					Element oElement = doc.createElement("output");
+					oElement.setAttribute("guid", output.getGuid());
+					taskElement.appendChild(oElement);
+				}
+				
+				List<PatternRole> performers = task.getPerformers();
+				for (PatternRole role : performers) {
+					Element roleElement = doc.createElement("performer");
+					roleElement.setAttribute("guid", role.getGuid());
+					taskElement.appendChild(roleElement);
+				}
+				
+				rootElement.appendChild(taskElement);
+			}
+			
+			for (PatternWorkProduct workProduct : patternProject.getPatternWorkProducts().values()) {
+				Element wpElement = doc.createElement("work_product");
+				wpElement.setAttribute("name", workProduct.getName());
+				wpElement.setAttribute("guid", workProduct.getGuid());
+				
+				rootElement.appendChild(wpElement);
+			}
+			
+			for (PatternRole role : patternProject.getPatternRoles().values()) {
+				Element roleElement = doc.createElement("role");
+				roleElement.setAttribute("name", role.getName());
+				roleElement.setAttribute("guid", role.getGuid());
+				
+				rootElement.appendChild(roleElement);
+			}
+			
+			doc.appendChild(rootElement);
+			
+			// write the content into xml file
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			DOMSource source = new DOMSource(doc);
+			
+			String path = data.getDirectory() + "\\" + patternProject.getName() + ".xml";
+			StreamResult result = new StreamResult(new File(path));
+			transformer.transform(source, result);
+			this.logger.logMessage("Process exported.");
+			
+		} catch (ParserConfigurationException e) {
+			this.logger.logError("Error during XML export initialization.", e);
+		} catch (TransformerConfigurationException e) {
+			this.logger.logError("Error during XML export.", e);
+		} catch (TransformerException e) {
+			this.logger.logError("Error during XML export.", e);
 		}
-	    
 	}
 	
 }

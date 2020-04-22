@@ -7,11 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.epf.export.pattern.ExportPatternData;
-import org.eclipse.epf.export.pattern.ExportPatternSQLService;
 import org.eclipse.epf.export.pattern.ExportPatternService;
-import org.eclipse.epf.export.pattern.ExportPatternXMLService;
 import org.eclipse.epf.export.pattern.ui.ExportPatternUIResources;
-import org.eclipse.epf.export.services.PluginExportData;
 import org.eclipse.epf.ui.wizards.BaseWizard;
 import org.eclipse.epf.uma.MethodPlugin;
 import org.eclipse.jface.viewers.IStructuredSelection;
