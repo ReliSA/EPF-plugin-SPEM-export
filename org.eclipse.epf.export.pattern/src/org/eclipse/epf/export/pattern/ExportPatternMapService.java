@@ -1,5 +1,6 @@
 package org.eclipse.epf.export.pattern;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,64 +38,74 @@ public class ExportPatternMapService {
 
 	private static ExportPatternLogger logger;
 
-	public static PatternProject map(MethodPlugin methodPlugin, ExportPatternLogger exportPatternLogger) {
+	public static List<PatternProject> map(Collection<MethodPlugin> methodPlugins, ExportPatternLogger exportPatternLogger) {
 
 		logger = exportPatternLogger;
 
-		PatternProject patternProject = new PatternProject();
-		parseMethodPluginDescription(patternProject, methodPlugin.getBriefDescription());
+		List<PatternProject> patternProjects = new ArrayList<PatternProject>();
 
-		DisciplineCategoriesItemProvider disciplineProvider = (DisciplineCategoriesItemProvider) TngUtil
-				.getDisciplineCategoriesItemProvider(methodPlugin);
-		Collection<Discipline> disciplines = disciplineProvider.getChildren(disciplineProvider);
-		for (Discipline discipline : disciplines) {
-			PatternDiscipline patternDiscipline = new PatternDiscipline();
-			patternDiscipline.setName(discipline.getName());
-		}
+		for (MethodPlugin methodPlugin : methodPlugins) {
+			PatternProject patternProject = new PatternProject();
+			patternProject.setName(methodPlugin.getName());
+			parseMethodPluginDescription(patternProject, methodPlugin.getBriefDescription());
 
-		List<Task> tasks = ProcessUtil.getAllTasks(methodPlugin);
-		for (Task task : tasks) {
-			PatternTask patternTask = new PatternTask();
-			patternTask.setGuid(task.getGuid());
-			patternTask.setName(task.getName());
-			parseMainDescription(patternTask, task.getPresentation().getMainDescription());
-
-			patternProject.getPatternTasks().put(patternTask.getGuid(), patternTask);
-
-			List<WorkProduct> outputs = task.getOutput();
-			for (WorkProduct output : outputs) {
-				mapWorkProduct(patternProject, output, patternTask);
+			DisciplineCategoriesItemProvider disciplineProvider = (DisciplineCategoriesItemProvider) TngUtil
+					.getDisciplineCategoriesItemProvider(methodPlugin);
+			Collection<Discipline> disciplines = disciplineProvider.getChildren(disciplineProvider);
+			for (Discipline discipline : disciplines) {
+				PatternDiscipline patternDiscipline = new PatternDiscipline();
+				patternDiscipline.setName(discipline.getName());
 			}
 
-			List<org.eclipse.epf.uma.Role> performers = task.getPerformedBy();
-			for (org.eclipse.epf.uma.Role role : performers) {
-				String guid = role.getGuid();
-				PatternRole patternRole = patternProject.getPatternRoles().get(guid);
-				if (patternRole == null) {
-					patternRole = new PatternRole();
-					patternRole.setName(role.getName());
-					patternProject.getPatternRoles().put(guid, patternRole);
+			List<Task> tasks = ProcessUtil.getAllTasks(methodPlugin);
+			for (Task task : tasks) {
+				mapTask(patternProject, task);
+			}
+
+			List<Process> processes = TngUtil.getAllProcesses(methodPlugin);
+			for (Process process : processes) {
+
+				ComposedAdapterFactory adapterFactory = null;
+
+				adapterFactory = TngAdapterFactory.INSTANCE.createWBSComposedAdapterFactory();
+
+				ITreeContentProvider contentProvider = new AdapterFactoryContentProvider(adapterFactory);
+
+				if (process.getBreakdownElements().size() > 0) {
+					inspectProcess(contentProvider, process, patternProject, null);
 				}
-				patternTask.getPerformers().add(patternRole);
-			}
-		}
 
-		List<Process> processes = TngUtil.getAllProcesses(methodPlugin);
-		for (Process process : processes) {
-
-			ComposedAdapterFactory adapterFactory = null;
-
-			adapterFactory = TngAdapterFactory.INSTANCE.createWBSComposedAdapterFactory();
-
-			ITreeContentProvider contentProvider = new AdapterFactoryContentProvider(adapterFactory);
-
-			if (process.getBreakdownElements().size() > 0) {
-				inspectProcess(contentProvider, process, patternProject, null);
 			}
 
+			patternProjects.add(patternProject);
+		}
+		return patternProjects;
+	}
+
+	private static void mapTask(PatternProject patternProject, Task task) {
+		PatternTask patternTask = new PatternTask();
+		patternTask.setGuid(task.getGuid());
+		patternTask.setName(task.getName());
+		parseMainDescription(patternTask, task.getPresentation().getMainDescription());
+
+		patternProject.getPatternTasks().put(patternTask.getGuid(), patternTask);
+
+		List<WorkProduct> outputs = task.getOutput();
+		for (WorkProduct output : outputs) {
+			mapWorkProduct(patternProject, output, patternTask);
 		}
 
-		return patternProject;
+		List<org.eclipse.epf.uma.Role> performers = task.getPerformedBy();
+		for (org.eclipse.epf.uma.Role role : performers) {
+			String guid = role.getGuid();
+			PatternRole patternRole = patternProject.getPatternRoles().get(guid);
+			if (patternRole == null) {
+				patternRole = new PatternRole();
+				patternRole.setName(role.getName());
+				patternProject.getPatternRoles().put(guid, patternRole);
+			}
+			patternTask.getPerformers().add(patternRole);
+		}
 	}
 
 	/**
@@ -144,8 +155,9 @@ public class ExportPatternMapService {
 			}
 		}
 	}
-	
-	private static void mapWorkProduct(PatternProject patternProject, WorkProduct workProduct, PatternTask patternTask) {
+
+	private static void mapWorkProduct(PatternProject patternProject, WorkProduct workProduct,
+			PatternTask patternTask) {
 		PatternWorkProduct patternWorkProduct = null;
 		if (workProduct instanceof Artifact) {
 			patternWorkProduct = new PatternArtifact();
@@ -165,7 +177,7 @@ public class ExportPatternMapService {
 	private static void parseMainDescription(Descriptable descriptable, String mainDescription) {
 		String[] lines = mainDescription.split(System.getProperty("line.separator"));
 		for (String line : lines) {
-			line = line.replaceAll("\\<.*?>","").trim();
+			line = line.replaceAll("\\<.*?>", "").trim();
 			if (line.startsWith("keywords")) {
 				String[] tokens = line.split("=")[1].split(",");
 				if (descriptable instanceof PatternTask) {
@@ -173,7 +185,8 @@ public class ExportPatternMapService {
 				} else if (descriptable instanceof PatternWorkProduct) {
 					((PatternWorkProduct) descriptable).getTask().setTokens(tokens);
 				} else {
-					logger.logWarning(String.format("Element with GUID %s: Keywords attribute parsing error.", descriptable.getGuid()));
+					logger.logWarning(String.format("Element with GUID %s: Keywords attribute parsing error.",
+							descriptable.getGuid()));
 				}
 			} else if (line.startsWith("amount")) {
 				if (descriptable instanceof PatternTask) {
@@ -181,18 +194,19 @@ public class ExportPatternMapService {
 				} else if (descriptable instanceof PatternWorkProduct) {
 					((PatternWorkProduct) descriptable).getTask().setAmount(line);
 				} else {
-					logger.logWarning(String.format("Element with GUID %s: Amount attribute parsing error.", descriptable.getGuid()));
+					logger.logWarning(String.format("Element with GUID %s: Amount attribute parsing error.",
+							descriptable.getGuid()));
 				}
 			} else {
 				logger.logWarning("Invalid parameter" + line);
 			}
 		}
 	}
-	
+
 	private static void parseMethodPluginDescription(PatternProject project, String description) {
 		String[] lines = description.split(System.getProperty("line.separator"));
 		for (String line : lines) {
-			line = line.replaceAll("\\<.*?>","").trim();
+			line = line.replaceAll("\\<.*?>", "").trim();
 			if (line.startsWith("pattern")) {
 				logger.logMessage("is pattern " + line.split("=")[1]);
 				project.setPattern(Boolean.parseBoolean(line.split("=")[1]));
@@ -201,5 +215,5 @@ public class ExportPatternMapService {
 			}
 		}
 	}
-	
+
 }

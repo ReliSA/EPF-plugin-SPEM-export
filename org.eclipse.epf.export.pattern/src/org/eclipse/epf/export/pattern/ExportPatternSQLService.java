@@ -31,22 +31,20 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 		return new ExportPatternSQLService(data, logger);
 	}
 
-	public void export() {
+	public void export(List<PatternProject> patternProjects) {
 		this.logger.logMessage("Exportig patterns to SQL started.");
 		
-		for (MethodPlugin methodPlugin : data.getSelectedPlugins()) {
-			
-			PatternProject patternProject = ExportPatternMapService.map(methodPlugin, this.logger);
-			createSQLScript(methodPlugin, patternProject);
+		for (PatternProject patternProject : patternProjects) {
+			createSQLScript(patternProject);
 		}
 
 		return;
 	}
 
-	private void createSQLScript(MethodPlugin methodPlugin, PatternProject patternProject) {
+	private void createSQLScript(PatternProject patternProject) {
 
 		// creating SQL file
-		String path = data.getDirectory() + "\\" + methodPlugin.getName() + ".sql";
+		String path = data.getDirectory() + "\\" + patternProject.getName() + ".sql";
 		PrintWriter writer;
 		try {
 			writer = new PrintWriter(new FileWriter(path));		

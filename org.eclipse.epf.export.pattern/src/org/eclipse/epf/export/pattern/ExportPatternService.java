@@ -1,6 +1,10 @@
 package org.eclipse.epf.export.pattern;
 
 import java.io.File;
+import java.util.List;
+
+import org.eclipse.epf.export.pattern.domain.PatternProject;
+import org.eclipse.epf.uma.MethodPlugin;
 
 public class ExportPatternService {
 	
@@ -18,8 +22,10 @@ public class ExportPatternService {
 	}
 	
 	public void export() {
+		List<PatternProject> patternProjects = ExportPatternMapService.map(data.getSelectedPlugins(), this.logger);
+		
 		ExportPatternSQLService service = ExportPatternSQLService.getInstance(data, logger);
-		service.export();
+		service.export(patternProjects);
 	}
 
 }

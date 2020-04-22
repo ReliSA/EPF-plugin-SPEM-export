@@ -1,6 +1,5 @@
 package org.eclipse.epf.export.pattern.domain;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -9,17 +8,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement(name = "pattern")
-@XmlAccessorType (XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class PatternProject {
-	
+
+	private String name;
+
 	private HashMap<String, PatternWorkProduct> patternWorkProducts = new HashMap<String, PatternWorkProduct>();
-	
+
 	private HashMap<String, PatternTask> patternTasks = new HashMap<String, PatternTask>();
-	
+
 	private HashMap<String, PatternRole> patternRoles = new HashMap<String, PatternRole>();
-	
+
 	private HashMap<String, PatternPhase> patternPhases = new HashMap<String, PatternPhase>();
-	
+
 	private boolean isPattern = false;
 
 	public HashMap<String, PatternWorkProduct> getPatternWorkProducts() {
@@ -61,5 +62,13 @@ public class PatternProject {
 	public void setPattern(boolean isPattern) {
 		this.isPattern = isPattern;
 	}
-	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 }
