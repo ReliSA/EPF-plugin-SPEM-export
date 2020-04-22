@@ -6,13 +6,13 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.eclipse.epf.export.pattern.domain.PatternArtifact;
 import org.eclipse.epf.export.pattern.domain.PatternOutcome;
 import org.eclipse.epf.export.pattern.domain.PatternProject;
 import org.eclipse.epf.export.pattern.domain.PatternRole;
 import org.eclipse.epf.export.pattern.domain.PatternTask;
 import org.eclipse.epf.export.pattern.domain.PatternWorkProduct;
-import org.eclipse.epf.uma.MethodPlugin;
 
 public class ExportPatternSQLService implements IExportPatternSpecificService {
 
@@ -37,8 +37,6 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 		for (PatternProject patternProject : patternProjects) {
 			createSQLScript(patternProject);
 		}
-
-		return;
 	}
 
 	private void createSQLScript(PatternProject patternProject) {

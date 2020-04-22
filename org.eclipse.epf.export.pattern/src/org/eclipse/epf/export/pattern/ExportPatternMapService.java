@@ -38,7 +38,8 @@ public class ExportPatternMapService {
 
 	private static ExportPatternLogger logger;
 
-	public static List<PatternProject> map(Collection<MethodPlugin> methodPlugins, ExportPatternLogger exportPatternLogger) {
+	public static List<PatternProject> map(Collection<MethodPlugin> methodPlugins,
+			ExportPatternLogger exportPatternLogger) {
 
 		logger = exportPatternLogger;
 
@@ -101,6 +102,7 @@ public class ExportPatternMapService {
 			PatternRole patternRole = patternProject.getPatternRoles().get(guid);
 			if (patternRole == null) {
 				patternRole = new PatternRole();
+				patternRole.setGuid(guid);
 				patternRole.setName(role.getName());
 				patternProject.getPatternRoles().put(guid, patternRole);
 			}

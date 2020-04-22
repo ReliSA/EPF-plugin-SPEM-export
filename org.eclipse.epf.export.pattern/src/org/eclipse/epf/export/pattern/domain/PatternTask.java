@@ -1,19 +1,7 @@
 package org.eclipse.epf.export.pattern.domain;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.eclipse.epf.export.pattern.ExportPatternLogger;
-import org.jooq.Record;
-import org.jooq.SelectJoinStep;
-import org.jooq.impl.DSL;
 
 public class PatternTask implements Descriptable {
 	

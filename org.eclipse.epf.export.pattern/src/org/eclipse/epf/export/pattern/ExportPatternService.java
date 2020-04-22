@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.List;
 
 import org.eclipse.epf.export.pattern.domain.PatternProject;
-import org.eclipse.epf.uma.MethodPlugin;
 
 public class ExportPatternService {
 	

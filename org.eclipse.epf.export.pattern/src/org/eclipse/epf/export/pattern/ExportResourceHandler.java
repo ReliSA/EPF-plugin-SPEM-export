@@ -14,8 +14,9 @@ import org.eclipse.epf.uma.MethodPlugin;
  * @since 1.0
  */
 public class ExportResourceHandler extends BaseResourceHandler {
-	
+
 	private static boolean localDebug = false;
+
 	/**
 	 * Creates a new instance.
 	 */
@@ -31,7 +32,7 @@ public class ExportResourceHandler extends BaseResourceHandler {
 	}
 
 	public void copyResource(String arg0, EObject arg1, MethodPlugin arg2) {
-		return;	
+		return;
 	}
 
 }
