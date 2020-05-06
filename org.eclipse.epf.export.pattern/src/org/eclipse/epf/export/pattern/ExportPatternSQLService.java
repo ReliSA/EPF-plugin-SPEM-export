@@ -15,6 +15,8 @@ import org.eclipse.epf.export.pattern.domain.PatternTask;
 import org.eclipse.epf.export.pattern.domain.PatternWorkProduct;
 
 public class ExportPatternSQLService implements IExportPatternSpecificService {
+	
+	private static final ExportPatternSQLService exportPatternSQLService = new ExportPatternSQLService();
 
 	ExportPatternData data;
 
@@ -22,13 +24,10 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 
 	static List<PatternProject> patternProjects = new ArrayList<PatternProject>();
 
-	public ExportPatternSQLService(ExportPatternData data, ExportPatternLogger logger) {
-		this.data = data;
-		this.logger = logger;
-	}
-
-	public static ExportPatternSQLService getInstance(ExportPatternData data, ExportPatternLogger logger) {
-		return new ExportPatternSQLService(data, logger);
+	public static ExportPatternSQLService getInstance(ExportPatternData datap, ExportPatternLogger loggerp) {
+		exportPatternSQLService.data = datap;
+		exportPatternSQLService.logger = loggerp;
+		return exportPatternSQLService;
 	}
 
 	public void export(List<PatternProject> patternProjects) {
@@ -85,7 +84,7 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 		return sql;
 	}
 
-	private String addRateCondition(String amount) {
+	String addRateCondition(String amount) {
 		String[] tokens = amount.trim().split("( )*(amount)( )*|( )*(this.type)( )*(/)( )*");
 		String sign = tokens[1].replace("&lt;", "<").replace("&gt;", ">");
 		

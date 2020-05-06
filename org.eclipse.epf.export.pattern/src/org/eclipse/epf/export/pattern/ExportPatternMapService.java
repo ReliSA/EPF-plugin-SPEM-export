@@ -167,6 +167,7 @@ public class ExportPatternMapService {
 			patternWorkProduct = new PatternOutcome();
 		} else {
 			logger.logWarning("Invalid work product type of " + workProduct.getName());
+			return;
 		}
 		patternTask.getOutputs().add(patternWorkProduct);
 		patternWorkProduct.setTask(patternTask);
@@ -180,27 +181,30 @@ public class ExportPatternMapService {
 		String[] lines = mainDescription.split(System.getProperty("line.separator"));
 		for (String line : lines) {
 			line = line.replaceAll("\\<.*?>", "").trim();
-			if (line.startsWith("keywords")) {
-				String[] tokens = line.split("=")[1].split(",");
-				if (descriptable instanceof PatternTask) {
-					((PatternTask) descriptable).setTokens(tokens);
-				} else if (descriptable instanceof PatternWorkProduct) {
-					((PatternWorkProduct) descriptable).getTask().setTokens(tokens);
+			
+			if (!line.isEmpty()) {
+				if (line.startsWith("keywords")) {
+					String[] tokens = line.split("=")[1].split(",");
+					if (descriptable instanceof PatternTask) {
+						((PatternTask) descriptable).setTokens(tokens);
+					} else if (descriptable instanceof PatternWorkProduct) {
+						((PatternWorkProduct) descriptable).getTask().setTokens(tokens);
+					} else {
+						logger.logWarning(String.format("Element with GUID %s: Keywords attribute parsing error.",
+								descriptable.getGuid()));
+					}
+				} else if (line.startsWith("amount")) {
+					if (descriptable instanceof PatternTask) {
+						((PatternTask) descriptable).setAmount(line);
+					} else if (descriptable instanceof PatternWorkProduct) {
+						((PatternWorkProduct) descriptable).getTask().setAmount(line);
+					} else {
+						logger.logWarning(String.format("Element with GUID %s: Amount attribute parsing error.",
+								descriptable.getGuid()));
+					}
 				} else {
-					logger.logWarning(String.format("Element with GUID %s: Keywords attribute parsing error.",
-							descriptable.getGuid()));
+					logger.logWarning("Invalid parameter" + line);
 				}
-			} else if (line.startsWith("amount")) {
-				if (descriptable instanceof PatternTask) {
-					((PatternTask) descriptable).setAmount(line);
-				} else if (descriptable instanceof PatternWorkProduct) {
-					((PatternWorkProduct) descriptable).getTask().setAmount(line);
-				} else {
-					logger.logWarning(String.format("Element with GUID %s: Amount attribute parsing error.",
-							descriptable.getGuid()));
-				}
-			} else {
-				logger.logWarning("Invalid parameter" + line);
 			}
 		}
 	}
@@ -209,11 +213,14 @@ public class ExportPatternMapService {
 		String[] lines = description.split(System.getProperty("line.separator"));
 		for (String line : lines) {
 			line = line.replaceAll("\\<.*?>", "").trim();
-			if (line.startsWith("pattern")) {
-				logger.logMessage("is pattern " + line.split("=")[1]);
-				project.setPattern(Boolean.parseBoolean(line.split("=")[1]));
-			} else {
-				logger.logWarning("Invalid parameter" + line);
+			
+			if (!line.isEmpty()) {
+				if (line.startsWith("pattern")) {
+					logger.logMessage("is pattern " + line.split("=")[1]);
+					project.setPattern(Boolean.parseBoolean(line.split("=")[1]));
+				} else {
+					logger.logWarning("Invalid parameter" + line);
+				}
 			}
 		}
 	}

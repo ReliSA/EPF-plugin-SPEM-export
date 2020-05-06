@@ -112,18 +112,19 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 		exportSql = new Button(formatGroup, SWT.CHECK);
 		exportSql.setText("SQL");
 		exportSql.addSelectionListener(new SelectionAdapter() {
-	        @Override
 	        public void widgetSelected(SelectionEvent event) {
 	            Button btn = (Button) event.getSource();
 	            data.setExportSql(btn.getSelection());
 	        }
 	    });
+		
+		// init
 		exportSql.setSelection(true);
+		data.setExportSql(true);
 		
 		exportXml = new Button(formatGroup, SWT.CHECK);
 		exportXml.setText("XML");
 		exportXml.addSelectionListener(new SelectionAdapter() {
-	        @Override
 	        public void widgetSelected(SelectionEvent event) {
 	            Button btn = (Button) event.getSource();
 	            data.setExportXml(btn.getSelection());
@@ -150,6 +151,18 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 				}
 			}
 		});
+		exportSql.addSelectionListener(new SelectionAdapter() {
+	        public void widgetSelected(SelectionEvent event) {
+	            Button btn = (Button) event.getSource();
+	            data.setExportSql(btn.getSelection());
+	        }
+	    });
+		exportXml.addSelectionListener(new SelectionAdapter() {
+	        public void widgetSelected(SelectionEvent event) {
+	            Button btn = (Button) event.getSource();
+	            data.setExportXml(btn.getSelection());
+	        }
+	    });
 	}
 	
 	/**

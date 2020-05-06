@@ -94,7 +94,7 @@ public class ExportPatternXMLService implements IExportPatternSpecificService {
 			
 			doc.appendChild(rootElement);
 			
-			// write the content into xml file
+			// write the content into XML file
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
