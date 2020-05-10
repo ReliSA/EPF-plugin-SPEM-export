@@ -22,16 +22,8 @@ public class ExportPatternService {
 	
 	public void export() {
 		List<PatternProject> patternProjects = ExportPatternMapService.map(data.getSelectedPlugins(), this.logger);
-		
-		if (data.isExportSql()) {
-			ExportPatternSQLService service = ExportPatternSQLService.getInstance(data, logger);
-			service.export(patternProjects);
-		}
-		
-		if (data.isExportXml()) {
-			ExportPatternXMLService service = ExportPatternXMLService.getInstance(data, logger);
-			service.export(patternProjects);
-		}
+		ExportPatternSQLService service = ExportPatternSQLService.getInstance(data, logger);
+		service.export(patternProjects);
 		
 	}
 
