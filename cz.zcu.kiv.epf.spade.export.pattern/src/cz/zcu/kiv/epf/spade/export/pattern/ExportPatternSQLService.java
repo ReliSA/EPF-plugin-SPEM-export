@@ -19,7 +19,7 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 	
 	private static final ExportPatternSQLService exportPatternSQLService = new ExportPatternSQLService();
 
-	ExportPatternData data;
+	ExportPatternConfig data;
 
 	ExportPatternLogger logger;
 
@@ -31,7 +31,7 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 	 * @param loggerp shared logger
 	 * @return shared instance
 	 */
-	public static ExportPatternSQLService getInstance(ExportPatternData datap, ExportPatternLogger loggerp) {
+	public static ExportPatternSQLService getInstance(ExportPatternConfig datap, ExportPatternLogger loggerp) {
 		exportPatternSQLService.data = datap;
 		exportPatternSQLService.logger = loggerp;
 		return exportPatternSQLService;

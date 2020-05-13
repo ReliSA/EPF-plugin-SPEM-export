@@ -1,6 +1,5 @@
 package cz.zcu.kiv.epf.spade.export.pattern.ui.wizards;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -13,7 +12,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
-import cz.zcu.kiv.epf.spade.export.pattern.ExportPatternData;
+import cz.zcu.kiv.epf.spade.export.pattern.ExportPatternConfig;
 import cz.zcu.kiv.epf.spade.export.pattern.ExportPatternService;
 import cz.zcu.kiv.epf.spade.export.pattern.ui.ExportPatternUIResources;
 
@@ -41,7 +40,7 @@ public class ExportPatternWizard extends BaseWizard implements IExportWizard {
 	/** The wizard page for specifying target export directory. **/
 	protected SelectExportOptionsPage selectExportOptionsPage;
 	
-	protected ExportPatternData patternData = new ExportPatternData();
+	protected ExportPatternConfig patternData = new ExportPatternConfig();
 	
 	/**
 	 * Creates a new instance.

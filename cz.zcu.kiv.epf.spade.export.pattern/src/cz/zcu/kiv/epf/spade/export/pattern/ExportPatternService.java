@@ -7,16 +7,16 @@ import cz.zcu.kiv.epf.spade.export.pattern.domain.PatternProject;
 
 public class ExportPatternService {
 	
-	ExportPatternData data;
+	ExportPatternConfig data;
 	
 	ExportPatternLogger logger;
 	
-	public ExportPatternService(ExportPatternData data) {
+	public ExportPatternService(ExportPatternConfig data) {
 		this.data = data;
 		logger = new ExportPatternLogger(new File(System.getProperty("user.dir")));
 	}
 	
-	public static ExportPatternService getInstance(ExportPatternData data) {	
+	public static ExportPatternService getInstance(ExportPatternConfig data) {	
 		return new ExportPatternService(data);
 	}
 	

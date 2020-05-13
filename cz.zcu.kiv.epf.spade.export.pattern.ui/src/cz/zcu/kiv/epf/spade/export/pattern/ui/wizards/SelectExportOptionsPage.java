@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import cz.zcu.kiv.epf.spade.export.pattern.ExportPatternData;
+import cz.zcu.kiv.epf.spade.export.pattern.ExportPatternConfig;
 import cz.zcu.kiv.epf.spade.export.pattern.ui.ExportPatternUIPlugin;
 import cz.zcu.kiv.epf.spade.export.pattern.ui.ExportPatternUIResources;
 
@@ -40,13 +40,13 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 	
 	protected Button browseButton;
 	
-	protected ExportPatternData data;
+	protected ExportPatternConfig data;
 
 	
 	/**
 	 * Creates a new instance.
 	 */
-	public SelectExportOptionsPage(String pageName, ExportPatternData data) {
+	public SelectExportOptionsPage(String pageName, ExportPatternConfig data) {
 		super(pageName);
 		setTitle(ExportPatternUIResources.selectExportDirWizardPage_title);
 		setDescription(ExportPatternUIResources.selectExportDirWizardPage_text);
@@ -58,7 +58,7 @@ public class SelectExportOptionsPage extends BaseWizardPage {
 	/**
 	 * Creates a new instance.
 	 */
-	public SelectExportOptionsPage(ExportPatternData data) {
+	public SelectExportOptionsPage(ExportPatternConfig data) {
 		this(PAGE_NAME, data);
 	}
 

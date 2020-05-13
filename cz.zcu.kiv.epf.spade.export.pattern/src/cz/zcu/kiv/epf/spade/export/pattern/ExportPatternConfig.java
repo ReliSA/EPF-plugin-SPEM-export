@@ -2,9 +2,9 @@ package cz.zcu.kiv.epf.spade.export.pattern;
 
 import org.eclipse.epf.export.services.PluginExportData;
 
-public class ExportPatternData extends PluginExportData {
+public class ExportPatternConfig extends PluginExportData {
 	
-	public ExportPatternData() {
+	public ExportPatternConfig() {
 		super();
 	}
 	
