@@ -1,5 +1,6 @@
 package cz.zcu.kiv.epf.spade.export.pattern;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -55,7 +56,7 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 	private void createSQLScript(PatternProject patternProject) {
 
 		// creating SQL file
-		String path = data.getDirectory() + "\\" + patternProject.getName() + ".sql";
+		String path = data.getDirectory() + File.separator + patternProject.getName() + ".sql";
 		PrintWriter writer;
 		try {
 			writer = new PrintWriter(new FileWriter(path));		
