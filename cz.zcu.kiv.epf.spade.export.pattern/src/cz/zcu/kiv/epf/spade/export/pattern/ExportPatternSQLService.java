@@ -198,11 +198,11 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 					conditions.add("AND wi.workItemType = 'ARTIFACT'");
 
 				} else if (output instanceof PatternOutcome) {
-
-					conditions.add("AND wi.workItemType = 'COMMIT'");
+					
+					conditions.add(String.format("AND wi.workItemType = '%s'", ((PatternOutcome) output).getType().toUpperCase()));
 
 				} else {
-					// TODO
+					this.logger.logWarning(String.format("Unknown work item type %s", output.getName()));
 				}
 			}
 		}

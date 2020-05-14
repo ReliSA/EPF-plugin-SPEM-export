@@ -239,6 +239,8 @@ public class ExportPatternMapService {
 						logger.logWarning(String.format("Element with GUID %s: Amount attribute parsing error.",
 								descriptable.getGuid()));
 					}
+				} else if (line.startsWith("type") && descriptable instanceof PatternOutcome) {
+					((PatternOutcome) descriptable).setType(line.split("=")[1]);
 				} else {
 					logger.logWarning("Invalid parameter" + line);
 				}
