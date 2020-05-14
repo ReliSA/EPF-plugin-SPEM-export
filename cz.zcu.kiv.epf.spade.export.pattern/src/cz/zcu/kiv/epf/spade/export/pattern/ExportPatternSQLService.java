@@ -76,6 +76,8 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 
 			writer.close();
 			
+			this.logger.logMessage(String.format("Anti-pattern %s exported to SQL.", patternProject.getName()));
+			
 		} catch (IOException e) {
 			this.logger.logError(e.getMessage(), e);
 		}
@@ -237,7 +239,6 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 	 * @param tokens parsed keywords
 	 */
 	private void addNameConstraint(List<String> conditions, String[] tokens) {
-		this.logger.logMessage("tokens " + Arrays.toString(tokens));
 		if (tokens != null && tokens.length != 0) {
 
 			String likeCondition = "AND (";

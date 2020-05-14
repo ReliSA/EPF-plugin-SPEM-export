@@ -260,7 +260,6 @@ public class ExportPatternMapService {
 			
 			if (!line.isEmpty()) {
 				if (line.startsWith("pattern")) {
-					logger.logMessage("is pattern " + line.split("=")[1]);
 					project.setPattern(Boolean.parseBoolean(line.split("=")[1]));
 				} else {
 					logger.logWarning("Invalid parameter" + line);
