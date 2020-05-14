@@ -26,8 +26,5 @@
             id="org.eclipse.epf.export.pattern.ui.wizards.ExportPatternWizard">
       </wizard>
    </extension>
-   <extension
-         point="org.eclipse.epf.export.pattern.ui.exportPatternWizard">
-   </extension>
 
 </plugin>
