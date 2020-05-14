@@ -15,6 +15,13 @@ import cz.zcu.kiv.epf.spade.export.pattern.domain.PatternRole;
 import cz.zcu.kiv.epf.spade.export.pattern.domain.PatternTask;
 import cz.zcu.kiv.epf.spade.export.pattern.domain.PatternWorkProduct;
 
+/**
+ * Export class for SQL export.
+ * 
+ * @author Lenka Simeckova
+ * @since 1.0
+ *
+ */
 public class ExportPatternSQLService implements IExportPatternSpecificService {
 	
 	private static final ExportPatternSQLService exportPatternSQLService = new ExportPatternSQLService();
@@ -50,7 +57,7 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 	}
 
 	/**
-	 * 
+	 * Creates SQL script with one or more queries.
 	 * @param patternProject
 	 */
 	private void createSQLScript(PatternProject patternProject) {
@@ -78,8 +85,8 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 	/**
 	 * Builds whole SQL query.
 	 * @param patternTask
-	 * @param isPattern - indicator of "inverted" anti-patterns
-	 * @return
+	 * @param isPattern indicator of "inverted" anti-patterns
+	 * @return query
 	 */
 	private String generateSql(PatternTask patternTask, boolean isPattern) {
 		String sql = String.format("SELECT (CASE WHEN COUNT(*) > 0 THEN %d ELSE %d END) FROM ", isPattern ? 0 : 1, isPattern ? 1 : 0);
@@ -93,12 +100,12 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 	}
 
 	/**
-	 * 
-	 * @param tokens
+	 * Builds rate query prototype.
+	 * @param tokens keywords
 	 * @param outputs
 	 * @param performers
 	 * @param amount
-	 * @return
+	 * @return rate query prototype
 	 */
 	private String generateRateSql(String[] tokens, List<PatternWorkProduct> outputs, List<PatternRole> performers, String amount) {
 		String sql = "";
@@ -114,9 +121,9 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 	}
 
 	/**
-	 * 
-	 * @param amount
-	 * @return
+	 * Adds final rate condition for rate query.
+	 * @param amount unparsed amount attribute
+	 * @return condition
 	 */
 	public String addRateCondition(String amount) {
 		String[] tokens = amount.trim().split("( )*(amount)( )*|( )*(this.type)( )*(/)( )*");
@@ -126,11 +133,11 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 	}
 
 	/**
-	 * 
-	 * @param tokens
+	 * Creates basic query prototype from given task data.
+	 * @param tokens keywords
 	 * @param outputs
 	 * @param roles
-	 * @return
+	 * @return basic query prototype
 	 */
 	public String generateBasicSql(String[] tokens, List<PatternWorkProduct> outputs, List<PatternRole> roles) {
 
@@ -150,7 +157,7 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 	}
 	
 	/**
-	 * 
+	 * Adds constraint for roles.
 	 * @param conditions
 	 * @param joins
 	 * @param roles
@@ -174,9 +181,9 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 	}
 
 	/**
-	 * 
+	 * Adds constraint for work item type (task, artifact, ...).
 	 * @param conditions
-	 * @param outputs
+	 * @param outputs work items
 	 */
 	private void addTypeConstraint(List<String> conditions, List<PatternWorkProduct> outputs) {
 		if (outputs.isEmpty()) {
@@ -203,10 +210,10 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 	}
 
 	/**
-	 * 
+	 * Creates prototype of basic query from given joins and conditions.
 	 * @param joins
 	 * @param conditions
-	 * @return
+	 * @return query prototype
 	 */
 	private String assembleBasicQuery(List<String> joins, List<String> conditions) {
 		String result = "";

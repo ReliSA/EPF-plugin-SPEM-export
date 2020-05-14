@@ -35,6 +35,13 @@ import cz.zcu.kiv.epf.spade.export.pattern.domain.PatternRole;
 import cz.zcu.kiv.epf.spade.export.pattern.domain.PatternTask;
 import cz.zcu.kiv.epf.spade.export.pattern.domain.PatternWorkProduct;
 
+/**
+ * Class for mapping UMA to own data model.
+ * 
+ * @author Lenka Simeckova
+ * @since 1.0
+ *
+ */
 public class ExportPatternMapService {
 	
 	private static ExportPatternMapService exportPatternMapService = new ExportPatternMapService();
@@ -47,10 +54,10 @@ public class ExportPatternMapService {
 	}
 
 	/**
-	 * 
+	 * Maps UMA to own data model.
 	 * @param methodPlugins
 	 * @param exportPatternLogger
-	 * @return
+	 * @return list of patternProject instances
 	 */
 	public List<PatternProject> map(Collection<MethodPlugin> methodPlugins,
 			ExportPatternLogger exportPatternLogger) {
@@ -98,7 +105,7 @@ public class ExportPatternMapService {
 	}
 
 	/**
-	 * 
+	 * Maps task.
 	 * @param patternProject
 	 * @param task
 	 */
@@ -130,7 +137,7 @@ public class ExportPatternMapService {
 	}
 
 	/**
-	 * 
+	 * Parses process.
 	 * @param contentProvider
 	 * @param breakdownElement
 	 * @param patternProject
@@ -178,7 +185,7 @@ public class ExportPatternMapService {
 	}
 
 	/**
-	 * 
+	 * Maps work product.
 	 * @param patternProject
 	 * @param workProduct
 	 * @param patternTask
@@ -203,7 +210,7 @@ public class ExportPatternMapService {
 	}
 
 	/**
-	 * 
+	 * Parses Main Description field of Descriptable element
 	 * @param descriptable
 	 * @param mainDescription
 	 */
@@ -240,7 +247,7 @@ public class ExportPatternMapService {
 	}
 
 	/**
-	 * 
+	 * Parses method plug-in description (sign of inverted pattern).
 	 * @param project
 	 * @param description
 	 */
