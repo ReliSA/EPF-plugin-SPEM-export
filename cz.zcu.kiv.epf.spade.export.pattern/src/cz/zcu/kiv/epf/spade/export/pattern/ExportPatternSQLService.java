@@ -167,7 +167,7 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 	void addRoleConstraint(List<String> conditions, List<String> joins, List<PatternRole> roles) {
 		if (!roles.isEmpty()) {
 			joins.add("JOIN person_role pr ON p.id = pr.personId");
-			joins.add("JOIN role ON r.id = pr.roleId");
+			joins.add("JOIN role r ON r.id = pr.roleId");
 			joins.add("JOIN role_classification rc ON r.classId = rc.id");
 			
 			String roleCondition = "AND (";
