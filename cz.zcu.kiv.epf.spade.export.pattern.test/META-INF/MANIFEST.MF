@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Test
+Bundle-SymbolicName: cz.zcu.kiv.epf.spade.export.pattern.test
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: cz.zcu.kiv.epf.spade.export.pattern;bundle-version="1.0.0"
+Automatic-Module-Name: org.eclipse.epf.export.pattern.test
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

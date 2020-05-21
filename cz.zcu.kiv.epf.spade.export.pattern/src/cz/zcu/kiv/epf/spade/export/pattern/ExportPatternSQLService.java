@@ -172,8 +172,11 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 			
 			String roleCondition = "AND (";
 				
-			for (PatternRole performer : roles) {
-				roleCondition += "rc.class = '"  + performer.getName().replaceAll("_| ", "").toUpperCase() + "'";
+			for (int i = 0; i < roles.size(); i++) {
+				if (i != 0) {
+					roleCondition += " OR ";
+				}
+				roleCondition += "rc.class = '"  + roles.get(i).getName().replaceAll("_| ", "").toUpperCase() + "'";
 			}
 			
 			roleCondition += ")";
@@ -187,7 +190,7 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 	 * @param conditions
 	 * @param outputs work items
 	 */
-	private void addTypeConstraint(List<String> conditions, List<PatternWorkProduct> outputs) {
+	void addTypeConstraint(List<String> conditions, List<PatternWorkProduct> outputs) {
 		if (outputs.isEmpty()) {
 			
 			conditions.add("AND wi.workItemType = 'WORK_UNIT'");
@@ -201,7 +204,13 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 
 				} else if (output instanceof PatternOutcome) {
 					
-					conditions.add(String.format("AND wi.workItemType = '%s'", ((PatternOutcome) output).getType().toUpperCase()));
+					String type = ((PatternOutcome) output).getType();
+					if (type == null) {
+						this.logger.logWarning(String.format("Output %s without specified type.", output.getName()));
+						return;
+					}
+					
+					conditions.add(String.format("AND wi.workItemType = '%s'", type.toUpperCase()));
 
 				} else {
 					this.logger.logWarning(String.format("Unknown work item type %s", output.getName()));
@@ -238,7 +247,7 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 	 * @param conditions
 	 * @param tokens parsed keywords
 	 */
-	private void addNameConstraint(List<String> conditions, String[] tokens) {
+	void addNameConstraint(List<String> conditions, String[] tokens) {
 		if (tokens != null && tokens.length != 0) {
 
 			String likeCondition = "AND (";
@@ -247,7 +256,7 @@ public class ExportPatternSQLService implements IExportPatternSpecificService {
 				if (i != 0) {
 					likeCondition += " OR ";
 				}
-				likeCondition += "wi.name LIKE '%" + tokens[i] + "%'";
+				likeCondition += "wi.name LIKE '%" + tokens[i].trim() + "%'";
 			}
 
 			likeCondition += ")";

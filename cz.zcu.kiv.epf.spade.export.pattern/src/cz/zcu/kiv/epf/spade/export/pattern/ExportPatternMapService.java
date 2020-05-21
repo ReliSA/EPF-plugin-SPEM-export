@@ -214,7 +214,7 @@ public class ExportPatternMapService {
 	 * @param descriptable
 	 * @param mainDescription
 	 */
-	private void parseMainDescription(Descriptable descriptable, String mainDescription) {
+	void parseMainDescription(Descriptable descriptable, String mainDescription) {
 		String[] lines = mainDescription.split(System.getProperty("line.separator"));
 		for (String line : lines) {
 			line = line.replaceAll("\\<.*?>", "").trim();
@@ -240,7 +240,7 @@ public class ExportPatternMapService {
 								descriptable.getGuid()));
 					}
 				} else if (line.startsWith("type") && descriptable instanceof PatternOutcome) {
-					((PatternOutcome) descriptable).setType(line.split("=")[1]);
+					((PatternOutcome) descriptable).setType(line.split("=")[1].trim());
 				} else {
 					logger.logWarning("Invalid parameter" + line);
 				}
@@ -253,14 +253,14 @@ public class ExportPatternMapService {
 	 * @param project
 	 * @param description
 	 */
-	private void parseMethodPluginDescription(PatternProject project, String description) {
+	void parseMethodPluginDescription(PatternProject project, String description) {
 		String[] lines = description.split(System.getProperty("line.separator"));
 		for (String line : lines) {
 			line = line.replaceAll("\\<.*?>", "").trim();
 			
 			if (!line.isEmpty()) {
 				if (line.startsWith("pattern")) {
-					project.setPattern(Boolean.parseBoolean(line.split("=")[1]));
+					project.setPattern(Boolean.parseBoolean(line.split("=")[1].trim()));
 				} else {
 					logger.logWarning("Invalid parameter" + line);
 				}
